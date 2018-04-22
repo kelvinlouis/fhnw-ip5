@@ -7,48 +7,50 @@ const simulation = d3.forceSimulation()
     .force('charge', d3.forceManyBody())
     .force('center', d3.forceCenter(width / 2, height / 2));
 
-const graph = jupyterData;
-console.log('loaded', graph);
 
-const link = svg.append('g')
-    .attr('class', 'links')
-    .selectAll('line')
-    .data(graph.links)
-    .enter().append('line')
-    .attr('stroke-width', d => Math.sqrt(d.value));
+d3.json("graph.json", (error, graph) => {
+    if (error) throw error;
 
-const node = svg.append('g')
-    .attr('class', 'nodes')
-    .selectAll('circle')
-    .data(graph.nodes)
-    .enter().append('circle')
-    .attr('r', 5)
-    .attr('fill', d => color(d.group))
-    .call(d3.drag()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended));
+    const link = svg.append('g')
+        .attr('class', 'links')
+        .selectAll('line')
+        .data(graph.links)
+        .enter().append('line')
+        .attr('stroke-width', d => Math.sqrt(d.value));
 
-node.append('title')
-    .text(d => d.id);
+    const node = svg.append('g')
+        .attr('class', 'nodes')
+        .selectAll('circle')
+        .data(graph.nodes)
+        .enter().append('circle')
+        .attr('r', 5)
+        .attr('fill', d => color(d.group))
+        .call(d3.drag()
+            .on('start', dragstarted)
+            .on('drag', dragged)
+            .on('end', dragended));
 
-simulation
-    .nodes(graph.nodes)
-    .on('tick', ticked);
+    node.append('title')
+        .text(d => d.id);
 
-simulation
-    .force('link')
-    .links(graph.links);
+    simulation
+        .nodes(graph.nodes)
+        .on('tick', ticked);
 
-function ticked() {
-    link.attr('x1', d => d.source.x)
-        .attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x)
-        .attr('y2', d => d.target.y);
+    simulation
+        .force('link')
+        .links(graph.links);
 
-    node.attr('cx', d => d.x)
-        .attr('cy', d => d.y);
-}
+    function ticked() {
+        link.attr('x1', d => d.source.x)
+            .attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x)
+            .attr('y2', d => d.target.y);
+
+        node.attr('cx', d => d.x)
+            .attr('cy', d => d.y);
+    }
+});
 
 function dragstarted(d) {
     if (!d3.event.active) simulation.alphaTarget(0.3).restart();
