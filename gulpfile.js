@@ -57,19 +57,19 @@ gulp.task('compile:sass', function() {
         this.emit('end');
       }
     }))
-    .pipe(sourcemaps.init())
+    // .pipe(sourcemaps.init())
     .pipe(sass())
-    .pipe(sourcemaps.write())
+    // .pipe(sourcemaps.write())
     .pipe(gulp.dest('./build/'))
-    .pipe(gulpif(minifySass,rename(function (path) {
-      var tempname = path.basename.split('.');
-      tempname.splice(1, 0, 'min');
-      path.basename = tempname.join('.');
-      // path.basename += '.min';
-    })))
-    .pipe(gulpif(minifySass, csso()))
-    .pipe(plumber.stop())
-    .pipe(gulp.dest('./build/'))
+    // .pipe(gulpif(minifySass,rename(function (path) {
+    //   var tempname = path.basename.split('.');
+    //   tempname.splice(1, 0, 'min');
+    //   path.basename = tempname.join('.');
+    //   // path.basename += '.min';
+    // })))
+    // // .pipe(gulpif(minifySass, csso()))
+    // .pipe(plumber.stop())
+    // .pipe(gulp.dest('./build/'))
     .pipe(browserSync.stream({match: '**/*.css'})) // Exclude sourcemaps (".map")
     .pipe(notify(function (files) {
       if (sassError){
