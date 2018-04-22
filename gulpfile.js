@@ -12,8 +12,13 @@ const plumber = require('gulp-plumber');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
+const styleInject = require("gulp-style-inject");
 
-const minifySass = true;
+gulp.src("./src/*.html")
+    .pipe(styleInject())
+    .pipe(gulp.dest("./dist"));
+
+const minifySass = false;
 var sassError = false;
 
 var nodeVersion = (process && process.versions && process.versions.node);
@@ -80,6 +85,12 @@ gulp.task('compile:sass', function() {
     }));
 });
 
+gulp.task('compile:html', () =>
+    gulp.src('./*.html')
+        .pipe(styleInject())
+        .pipe(gulp.dest('./build/'))
+);
+
 gulp.task('compile:js', () =>
   gulp.src('src/**.js')
     .pipe(babel())
@@ -98,8 +109,19 @@ gulp.task('serve', ['build'], function() {
     [
       'src/**.scss'
     ],
-    ['compile:sass']
+    () => {
+      runSequence('compile:sass', 'compile:html')
+    }
   );
+
+    gulp.watch(
+        [
+            '*.html'
+        ],
+        [
+            'compile:html',
+        ],
+    );
 
   gulp.watch(
     [
@@ -122,6 +144,7 @@ gulp.task('build', function(callback) {
   runSequence(
     ['compile:sass'],
     ['compile:js'],
+    ['compile:html'],
     callback
   );
 });

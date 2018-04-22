@@ -2,13 +2,13 @@ const svg = d3.select('svg');
 const width = +svg.attr('width');
 const height = +svg.attr('height');
 const color = d3.scaleOrdinal(d3.schemeCategory20);
-
 const simulation = d3.forceSimulation()
     .force('link', d3.forceLink().id(d => d.id))
     .force('charge', d3.forceManyBody())
     .force('center', d3.forceCenter(width / 2, height / 2));
 
 const graph = jupyterData;
+console.log('loaded', graph);
 
 const link = svg.append('g')
     .attr('class', 'links')
