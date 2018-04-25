@@ -157,7 +157,6 @@ class Graph extends Component {
     return (
       <div className="Graph">
         <svg width="600" height="500"/>
-        Graph
       </div>
     );
   }

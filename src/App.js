@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import CssBaseline from 'material-ui/CssBaseline';
+import Grid from 'material-ui/Grid';
 import './App.css';
-
 import Graph from './Graph/Graph';
 import FilterControls from "./FilterControls/FilterControls";
 
@@ -99,8 +100,15 @@ class App extends Component {
 
     return (
       <div className="App">
-        {graph && <Graph data={graph} /> }
-        {graph && <FilterControls onFilterChange={(change) => this.onFilterChange(change)}/> }
+        <CssBaseline />
+        <Grid container spacing={16}>
+          <Grid item xs={8}>
+            {graph && <Graph data={graph} /> }
+          </Grid>
+          <Grid item xs={4}>
+            {graph && <FilterControls onFilterChange={(change) => this.onFilterChange(change)}/> }
+          </Grid>
+        </Grid>
       </div>
     );
   }

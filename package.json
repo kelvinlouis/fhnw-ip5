@@ -11,7 +11,9 @@
   "homepage": "",
   "keywords": [],
   "dependencies": {
+    "@material-ui/icons": "^1.0.0-beta.43",
     "d3": "^4.13.0",
+    "material-ui": "^1.0.0-beta.43",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "react-scripts": "1.1.4"
