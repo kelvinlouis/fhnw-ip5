@@ -11,6 +11,13 @@ import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import {
+  createEdgeColorEvent,
+  createEdgeWidthEvent,
+  createNodeColorEvent,
+  createNodeeCycleEvent,
+  createNodeSizeEvent
+} from './FilterEvent';
 
 const styles = {
   controlContainer: {
@@ -23,7 +30,7 @@ const styles = {
 
 class FilterControls extends Component {
   static propTypes = {
-    onFilterChange: PropTypes.fn,
+    onFilterChange: PropTypes.func,
   };
 
   static defaultProps = {
@@ -37,29 +44,34 @@ class FilterControls extends Component {
       nodeSize: '',
       nodeColor: '',
       nodeCycle: '',
-      edgeWeight: '',
+      edgeWidth: '',
       edgeColor: '',
     };
   }
 
   changeNodeSize = event => {
-    console.log('changeNodeSize', event);
+    const { onFilterChange } = this.props;
+    onFilterChange(createNodeSizeEvent('new'));
   };
 
   changeNodeColor = event => {
-    console.log('changeNodeColor', event);
+    const { onFilterChange } = this.props;
+    onFilterChange(createNodeColorEvent('new'));
   };
 
   changeNodeCycle = event => {
-    console.log('changeNodeCycle', event);
+    const { onFilterChange } = this.props;
+    onFilterChange(createNodeeCycleEvent('new'));
   };
 
-  changeEdgeWeight = event => {
-    console.log('changeEdgeWeight', event);
+  changeEdgeWidth = event => {
+    const { onFilterChange } = this.props;
+    onFilterChange(createEdgeWidthEvent('new'));
   };
 
   changeEdgeColor = event => {
-    console.log('changeEdgeColor', event);
+    const { onFilterChange } = this.props;
+    onFilterChange(createEdgeColorEvent('new'));
   };
 
   render() {
@@ -130,13 +142,13 @@ class FilterControls extends Component {
           </ExpansionPanelSummary>
           <ExpansionPanelDetails className={props.classes.controlContainer}>
             <FormControl className={props.classes.formControl}>
-              <InputLabel htmlFor="edgeWeight">Stärke</InputLabel>
+              <InputLabel htmlFor="edgeWidth">Stärke</InputLabel>
               <Select
-                value={this.state.edgeWeight}
-                onChange={this.changeEdgeWeight}
+                value={this.state.edgeWidth}
+                onChange={this.changeEdgeWidth}
                 inputProps={{
-                  name: 'edgeWeight',
-                  id: 'edgeWeight',
+                  name: 'edgeWidth',
+                  id: 'edgeWidth',
                 }}
               >
                 <MenuItem value="">None</MenuItem>

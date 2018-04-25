@@ -39,7 +39,7 @@ class App extends Component {
   }
 
   onFilterChange(value) {
-    console.log(value);
+    console.log('onFilterChange', value);
   }
 
   /**
@@ -106,7 +106,7 @@ class App extends Component {
             {graph && <Graph data={graph} /> }
           </Grid>
           <Grid item xs={4}>
-            {graph && <FilterControls onFilterChange={(change) => this.onFilterChange(change)}/> }
+            {graph && <FilterControls onFilterChange={(event) => this.onFilterChange(event)}/> }
           </Grid>
         </Grid>
       </div>
