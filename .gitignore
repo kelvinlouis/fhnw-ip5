@@ -2,7 +2,7 @@ data/
 .ipynb_checkpoints/
 build/
 .idea
-/public/graph_data
+public/graph_data/
 
 # dependencies
 /node_modules
