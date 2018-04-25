@@ -1,6 +1,6 @@
 {
   "name": "ip5-soziale-analysen",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "author": "Kelvin Louis & Nicola Cocquio",
   "private": true,
@@ -10,34 +10,16 @@
   },
   "homepage": "",
   "keywords": [],
-  "scripts": {
-    "start": "gulp serve"
+  "dependencies": {
+    "d3": "^4.13.0",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-scripts": "1.1.4"
   },
-  "devDependencies": {
-    "@babel/core": "^7.0.0-beta.34",
-    "@babel/preset-env": "^7.0.0-beta.34",
-    "babel-core": "^6.0.0",
-    "babel-preset-env": "^1.6.1",
-    "browser-sync": "^2.18.13",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^7.0.0",
-    "gulp-concat": "~2.6.0",
-    "gulp-csso": "~1.0.0",
-    "gulp-declare": "^0.3.0",
-    "gulp-expect-file": "0.0.7",
-    "gulp-if": "^2.0.1",
-    "gulp-notify": "~2.2.0",
-    "gulp-plumber": "~1.0.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-sass": "^2.3.2",
-    "gulp-sass-lint": "^1.2.0",
-    "gulp-sourcemaps": "^2.0.1",
-    "gulp-style-inject": "^0.1.1",
-    "gulp-uglify": "~1.5.1",
-    "gulp-watch": "~4.3.5",
-    "gulp-wrap": "^0.13.0",
-    "node-sass": "^3.10.1",
-    "run-sequence": "^1.1.5",
-    "sass-lint": "^1.9.1"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   }
 }
