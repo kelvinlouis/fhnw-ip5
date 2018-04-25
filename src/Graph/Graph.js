@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-
 import * as d3 from 'd3';
 import './Graph.css';
 
@@ -15,10 +14,10 @@ function positionLink(d) {
   const theta = Math.atan((x2 - x1) / (y2 - y1));
   const phi = Math.atan((y2 - y1) / (x2 - x1));
 
-  const sinTheta = d.source.r * Math.sin(theta);
-  const cosTheta = d.source.r * Math.cos(theta);
-  const sinPhi = d.target.r * Math.sin(phi);
-  const cosPhi = d.target.r * Math.cos(phi);
+  const sinTheta = d.source.size * Math.sin(theta);
+  const cosTheta = d.source.size * Math.cos(theta);
+  const sinPhi = d.target.size * Math.sin(phi);
+  const cosPhi = d.target.size * Math.cos(phi);
 
   // Set the position of the link's end point at the source node
   // such that it is on the edge closest to the target node
@@ -71,7 +70,7 @@ class Graph extends Component {
     const height = +svg.attr('height');
     const color = d3.scaleOrdinal(d3.schemeCategory20);
     const simulation = d3.forceSimulation()
-      .force('link', d3.forceLink().id(d => d.id).distance(100)/*.distance(d => radius(d.source.r / 2) + radius(d.target.r / 2))*/)
+      .force('link', d3.forceLink().id(d => d.id).distance(150)/*.distance(d => radius(d.source.r / 2) + radius(d.target.r / 2))*/)
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(width / 2, height / 2));
 
@@ -107,16 +106,19 @@ class Graph extends Component {
       .data(nodes)
       .enter().append('circle')
       .attr('class', 'node')
-      .attr('r', d => d.r)
-      .attr('fill', d => color(d.group))
+      .attr('r', d => d.size)
+      .attr('fill', d => color(d.color))
       .call(d3.drag()
         .on('start', dragstarted)
         .on('drag', dragged)
         .on('end', dragended));
 
-    const label = svg.append('g').selectAll('text')
+    const label = svg.append('g')
+      .attr('class', 'labels')
+      .selectAll('text')
       .data(nodes)
       .enter().append('text')
+      .attr('class','label')
       .attr('x', 10)
       .attr('y', '.35em')
       .text(d => d.label);
@@ -132,6 +134,8 @@ class Graph extends Component {
     function ticked() {
       link.attr('d', positionLink);
       node.attr('transform', transform);
+      node.attr('r', d => d.size);
+      node.attr('fill', d => d.color);
       label.attr('transform', transform);
     }
 

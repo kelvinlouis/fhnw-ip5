@@ -19,12 +19,47 @@ import {
   createNodeSizeEvent
 } from './FilterEvent';
 
+const nodeSizeAttributes = [
+  'degree_weight',
+  'in_degree_weight',
+  'out_degree_weight',
+  'degree_weight_absolute',
+  'in_degree_weight_absolute',
+  'out_degree_weight_absolute',
+  'degree_strengthen',
+  'in_degree_strengthen',
+  'out_degree_strengthen',
+  'degree_weaken',
+  'in_degree_weaken',
+  'out_degree_weaken',
+  'degree',
+  'in_degree',
+  'out_degree',
+];
+
+const nodeSizeColors = [
+  'influence',
+  'actionSystem',
+];
+
+const edgeWidths = [
+  'weight',
+  'weight_absolute',
+  'strengthen',
+  'weaken',
+];
+
+const edgeColors = [
+  'sign',
+];
+
 const styles = {
   controlContainer: {
-    'flex-flow': 'wrap'
+    'flex-flow': 'wrap',
   },
   formControl: {
     'width': '100%',
+    'margin-bottom': '1em',
   },
 };
 
@@ -51,27 +86,37 @@ class FilterControls extends Component {
 
   changeNodeSize = event => {
     const { onFilterChange } = this.props;
-    onFilterChange(createNodeSizeEvent('new'));
+    const newValue = event.target.value;
+    onFilterChange(createNodeSizeEvent(newValue));
+    this.setState({ nodeSize: newValue });
   };
 
   changeNodeColor = event => {
     const { onFilterChange } = this.props;
-    onFilterChange(createNodeColorEvent('new'));
+    const newValue = event.target.value;
+    onFilterChange(createNodeColorEvent(newValue));
+    this.setState({ nodeColor: newValue });
   };
 
   changeNodeCycle = event => {
     const { onFilterChange } = this.props;
-    onFilterChange(createNodeeCycleEvent('new'));
+    const newValue = event.target.value;
+    onFilterChange(createNodeeCycleEvent(newValue));
+    this.setState({ nodeCycle: newValue });
   };
 
   changeEdgeWidth = event => {
     const { onFilterChange } = this.props;
-    onFilterChange(createEdgeWidthEvent('new'));
+    const newValue = event.target.value;
+    onFilterChange(createEdgeWidthEvent(newValue));
+    this.setState({ edgeWidth: newValue });
   };
 
   changeEdgeColor = event => {
     const { onFilterChange } = this.props;
-    onFilterChange(createEdgeColorEvent('new'));
+    const newValue = event.target.value;
+    onFilterChange(createEdgeColorEvent(newValue));
+    this.setState({ edgeColor: newValue });
   };
 
   render() {
@@ -94,10 +139,8 @@ class FilterControls extends Component {
                   id: 'nodeSize',
                 }}
               >
-                <MenuItem value="">None</MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <MenuItem value="">-</MenuItem>
+                {nodeSizeAttributes.map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}
               </Select>
             </FormControl>
 
@@ -111,10 +154,8 @@ class FilterControls extends Component {
                   id: 'nodeColor',
                 }}
               >
-                <MenuItem value="">None</MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <MenuItem value="">-</MenuItem>
+                {nodeSizeColors.map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}
               </Select>
             </FormControl>
 
@@ -151,10 +192,8 @@ class FilterControls extends Component {
                   id: 'edgeWidth',
                 }}
               >
-                <MenuItem value="">None</MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <MenuItem value="">-</MenuItem>
+                {edgeWidths.map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}
               </Select>
             </FormControl>
 
@@ -168,10 +207,8 @@ class FilterControls extends Component {
                   id: 'edgeColor',
                 }}
               >
-                <MenuItem value="">None</MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                <MenuItem value="">-</MenuItem>
+                {edgeColors.map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}
               </Select>
             </FormControl>
           </ExpansionPanelDetails>
