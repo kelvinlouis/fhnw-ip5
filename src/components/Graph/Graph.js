@@ -89,11 +89,13 @@ class Graph extends Component {
         weaken: PropTypes.number,
         sign: PropTypes.number,
       })),
-    }).isRequired,
+    }),
   };
 
-  componentDidMount() {
+  componentDidUpdate() {
     const { data } = this.props;
+
+    if (data === null) return;
 
     const svg = d3.select('svg');
     const width = +svg.attr('width');
@@ -191,6 +193,10 @@ class Graph extends Component {
   }
 
   render() {
+    const { data } = this.props;
+    if (data === null) <div />;
+    console.log('Graph', data);
+
     return (
       <div className="Graph">
         <svg width="600" height="500"/>

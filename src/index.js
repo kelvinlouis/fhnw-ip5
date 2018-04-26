@@ -16,12 +16,6 @@ import {
 
 const store = createStore(rootReducer);
 
-console.log(store.getState());
-
-const unsubscribe = store.subscribe(() => {
-  console.log(store.getState());
-});
-
 store.dispatch(setNodeSizeFilterList([
   'degree_weight',
   'in_degree_weight',
@@ -54,11 +48,10 @@ store.dispatch(setEdgeWidthFilterList([
 
 store.dispatch(setEdgeColorFilterList(['sign']));
 
-unsubscribe();
-
 ReactDOM.render(
   <Provider store={store}>
     <App />
   </Provider>,
   document.getElementById('root'));
+
 registerServiceWorker();

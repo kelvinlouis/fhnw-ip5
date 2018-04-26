@@ -8,6 +8,8 @@ export const SET_NODE_COLOR_FILTER_LIST = 'SET_NODE_COLOR_FILTER_LIST';
 export const SET_EDGE_WIDTH_FILTER_LIST = 'SET_EDGE_WIDTH_FILTER_LIST';
 export const SET_EDGE_COLOR_FILTER_LIST = 'SET_EDGE_COLOR_FILTER_LIST';
 
+export const SET_GRAPH = 'SET_GRAPH';
+
 const setFilter = (type, filter) => ({ type, filter, });
 const setFilterList = (type, list) => ({ type, list, });
 
@@ -20,3 +22,5 @@ export const setNodeSizeFilterList = list => setFilterList(SET_NODE_SIZE_FILTER_
 export const setNodeColorFilterList = list => setFilterList(SET_NODE_COLOR_FILTER_LIST, list);
 export const setEdgeWidthFilterList = list => setFilterList(SET_EDGE_WIDTH_FILTER_LIST, list);
 export const setEdgeColorFilterList = list => setFilterList(SET_EDGE_COLOR_FILTER_LIST, list);
+
+export const setGraph = data => ({ type: SET_GRAPH, data });
