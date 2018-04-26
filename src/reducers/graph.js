@@ -11,45 +11,20 @@ import { min, max } from 'underscore';
 function createGraph(origin) {
   const color = d3.scaleOrdinal(d3.schemeCategory20);
 
+  // Copy nodes
   const nodes = origin.nodes.map(n => {
-    return {
-      id: n.id,
-      label: n.label,
+    return Object.assign({
       size: 10,
-      color: color(1),
-      influence: n.influence,
-      actionSystem: n.actionSystem,
-      degree_weight: n.degree_weight,
-      in_degree_weight: n.in_degree_weight,
-      out_degree_weight: n.out_degree_weight,
-      degree_weight_absolute: n.degree_weight_absolute,
-      in_degree_weight_absolute: n.in_degree_weight_absolute,
-      out_degree_weight_absolute: n.out_degree_weight_absolute,
-      degree_strengthen: n.degree_strengthen,
-      in_degree_strengthen: n.in_degree_strengthen,
-      out_degree_strengthen: n.out_degree_strengthen,
-      degree_weaken: n.degree_weaken,
-      in_degree_weaken: n.in_degree_weaken,
-      out_degree_weaken: n.out_degree_weaken,
-      degree: n.degree,
-      in_degree: n.in_degree,
-      out_degree: n.out_degree,
-    };
+      color: color(1)
+    }, n);
   });
 
+  // Copy links
   const links = origin.links.map(l => {
-    return {
-      id: l.id,
-      source: l.source,
-      target: l.target,
+    return Object.assign({
       width: 1,
       color: color(1),
-      weight: l.weight,
-      weight_absolute: l.weight_absolute,
-      strengthen: l.strengthen,
-      weaken: l.weaken,
-      sign: l.sign,
-    };
+    }, l);
   });
 
   return { nodes, links };
