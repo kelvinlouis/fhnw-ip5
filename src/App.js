@@ -6,7 +6,12 @@ import Grid from 'material-ui/Grid';
 import './App.css';
 import Graph from './Graph/Graph';
 import FilterControls from './FilterControls/FilterControls';
-import {NODE_FILTER_COLOR, NODE_FILTER_SIZE} from './FilterControls/FilterEvent';
+import {
+  EDGE_FILTER_COLOR,
+  EDGE_FILTER_WIDTH,
+  NODE_FILTER_COLOR,
+  NODE_FILTER_SIZE
+} from './FilterControls/FilterEvent';
 
 /**
  * Path where all the graphs are exported by Jupyter
@@ -48,6 +53,10 @@ class App extends Component {
       this.changeNodeSize(event.value);
     } else if (event.type === NODE_FILTER_COLOR) {
       this.changeNodeColor(event.value);
+    } else if (event.type === EDGE_FILTER_WIDTH) {
+      this.changeEdgeWidth(event.value);
+    } else if (event.type === EDGE_FILTER_COLOR) {
+      this.changeEdgeColor(event.value);
     }
   }
 
@@ -70,20 +79,43 @@ class App extends Component {
       .range(['red', 'white', 'green']);
 
     nodes.map(n => {
-      console.log(n[attr]);
       n.color = color(n[attr])
     });
   }
 
-  createGraph(sizeAdjuster = null) {
+  changeEdgeWidth(attr) {
+    const { graph: { links } } = this.state;
+    const minValue = min(links, l => l[attr])[attr];
+    const maxValue = max(links, l => l[attr])[attr];
+    const rscale = d3.scaleLinear().domain([minValue, maxValue]).range([1, 5]);
+
+    links.map(l => {
+      l.width = rscale(l[attr])
+    });
+  }
+
+  changeEdgeColor(attr) {
+    const { graph: { links } } = this.state;
+
+    const color = d3.scaleLinear()
+      .domain([-1, 0, 1])
+      .range(['red', 'black', 'green']);
+
+    links.map(l => {
+      l.color = color(l[attr])
+    });
+  }
+
+  createGraph() {
     const { origin } = this.state;
+    const color = d3.scaleOrdinal(d3.schemeCategory20);
 
     const nodes = origin.nodes.map(n => {
       return {
         id: n.id,
         label: n.label,
         size: 10,
-        color: 1,
+        color: color(1),
         influence: n.influence,
         actionSystem: n.actionSystem,
         degree_weight: n.degree_weight,
@@ -110,6 +142,12 @@ class App extends Component {
         source: l.source,
         target: l.target,
         width: 1,
+        color: color(1),
+        weight: l.weight,
+        weight_absolute: l.weight_absolute,
+        strengthen: l.strengthen,
+        weaken: l.weaken,
+        sign: l.sign,
       };
     });
 

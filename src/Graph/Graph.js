@@ -3,8 +3,6 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import './Graph.css';
 
-const radius = d3.scaleSqrt().range([0, 6]);
-
 function positionLink(d) {
   let x1 = d.source.x;
   let y1 = d.source.y;
@@ -57,8 +55,40 @@ function transform(d) {
 class Graph extends Component {
   static propTypes = {
     data: PropTypes.shape({
-      nodes: PropTypes.array,
-      links: PropTypes.array,
+      nodes: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string,
+        label: PropTypes.string,
+        size: PropTypes.number,
+        color: PropTypes.string,
+        actionSystem: PropTypes.string,
+        influence: PropTypes.number,
+        degree_weight: PropTypes.number,
+        in_degree_weight: PropTypes.number,
+        out_degree_weight: PropTypes.number,
+        degree_weight_absolute: PropTypes.number,
+        in_degree_weight_absolute: PropTypes.number,
+        out_degree_weight_absolute: PropTypes.number,
+        degree_strengthen: PropTypes.number,
+        in_degree_strengthen: PropTypes.number,
+        out_degree_strengthen: PropTypes.number,
+        degree_weaken: PropTypes.number,
+        in_degree_weaken: PropTypes.number,
+        out_degree_weaken: PropTypes.number,
+        degree: PropTypes.number,
+        in_degree: PropTypes.number,
+        out_degree: PropTypes.number,
+      })),
+      links: PropTypes.arrayOf(PropTypes.shape({
+        source: PropTypes.string,
+        target: PropTypes.string,
+        width: PropTypes.number,
+        color: PropTypes.string,
+        weight: PropTypes.number,
+        weight_absolute: PropTypes.number,
+        strengthen: PropTypes.number,
+        weaken: PropTypes.number,
+        sign: PropTypes.number,
+      })),
     }).isRequired,
   };
 
@@ -68,7 +98,6 @@ class Graph extends Component {
     const svg = d3.select('svg');
     const width = +svg.attr('width');
     const height = +svg.attr('height');
-    const color = d3.scaleOrdinal(d3.schemeCategory20);
     const simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id(d => d.id).distance(150)/*.distance(d => radius(d.source.r / 2) + radius(d.target.r / 2))*/)
       .force('charge', d3.forceManyBody())
@@ -97,8 +126,8 @@ class Graph extends Component {
       .enter().append('path')
       .attr('class', d => 'link')
       .attr('marker-end', d => 'url(#default)')
-      .style('stroke', 'black')
-      .style('stroke-width', '1px');
+      .style('stroke', d => d.color)
+      .style('stroke-width', d => `${d.width}px`);
 
     const node = svg.append('g')
       .attr('class', 'nodes')
@@ -107,7 +136,7 @@ class Graph extends Component {
       .enter().append('circle')
       .attr('class', 'node')
       .attr('r', d => d.size)
-      .attr('fill', d => color(d.color))
+      .attr('fill', d => d.color)
       .call(d3.drag()
         .on('start', dragstarted)
         .on('drag', dragged)
@@ -132,10 +161,14 @@ class Graph extends Component {
       .links(data.links);
 
     function ticked() {
-      link.attr('d', positionLink);
-      node.attr('transform', transform);
-      node.attr('r', d => d.size);
-      node.attr('fill', d => d.color);
+      link.attr('d', positionLink)
+        .style('stroke', d => d.color)
+        .style('stroke-width', d => `${d.width}px`);
+
+      node.attr('transform', transform)
+        .attr('r', d => d.size)
+        .attr('fill', d => d.color);
+
       label.attr('transform', transform);
     }
 
