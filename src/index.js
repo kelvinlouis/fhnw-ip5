@@ -1,8 +1,64 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import './index.css';
 import App from './App';
+import rootReducer from './reducers';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import {
+  setNodeSizeFilterList,
+  setNodeColorFilterList,
+  setEdgeWidthFilterList,
+  setEdgeColorFilterList,
+} from './actions';
+
+const store = createStore(rootReducer);
+
+console.log(store.getState());
+
+const unsubscribe = store.subscribe(() => {
+  console.log(store.getState());
+});
+
+store.dispatch(setNodeSizeFilterList([
+  'degree_weight',
+  'in_degree_weight',
+  'out_degree_weight',
+  'degree_weight_absolute',
+  'in_degree_weight_absolute',
+  'out_degree_weight_absolute',
+  'degree_strengthen',
+  'in_degree_strengthen',
+  'out_degree_strengthen',
+  'degree_weaken',
+  'in_degree_weaken',
+  'out_degree_weaken',
+  'degree',
+  'in_degree',
+  'out_degree',
+]));
+
+store.dispatch(setNodeColorFilterList([
+  'influence',
+  'actionSystem',
+]));
+
+store.dispatch(setEdgeWidthFilterList([
+  'weight',
+  'weight_absolute',
+  'strengthen',
+  'weaken',
+]));
+
+store.dispatch(setEdgeColorFilterList(['sign']));
+
+unsubscribe();
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root'));
 registerServiceWorker();

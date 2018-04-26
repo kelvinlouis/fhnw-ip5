@@ -5,13 +5,8 @@ import CssBaseline from 'material-ui/CssBaseline';
 import Grid from 'material-ui/Grid';
 import './App.css';
 import Graph from './Graph/Graph';
-import FilterControls from './FilterControls/FilterControls';
-import {
-  EDGE_FILTER_COLOR,
-  EDGE_FILTER_WIDTH,
-  NODE_FILTER_COLOR,
-  NODE_FILTER_SIZE
-} from './FilterControls/FilterEvent';
+import FilterContainer from './containers/FilterContainer';
+
 
 /**
  * Path where all the graphs are exported by Jupyter
@@ -48,63 +43,63 @@ class App extends Component {
     this.createGraph();
   }
 
-  onFilterChange(event) {
-    if (event.type === NODE_FILTER_SIZE) {
-      this.changeNodeSize(event.value);
-    } else if (event.type === NODE_FILTER_COLOR) {
-      this.changeNodeColor(event.value);
-    } else if (event.type === EDGE_FILTER_WIDTH) {
-      this.changeEdgeWidth(event.value);
-    } else if (event.type === EDGE_FILTER_COLOR) {
-      this.changeEdgeColor(event.value);
-    }
-  }
+  // onFilterChange(event) {
+  //   if (event.type === NODE_FILTER_SIZE) {
+  //     this.changeNodeSize(event.value);
+  //   } else if (event.type === NODE_FILTER_COLOR) {
+  //     this.changeNodeColor(event.value);
+  //   } else if (event.type === EDGE_FILTER_WIDTH) {
+  //     this.changeEdgeWidth(event.value);
+  //   } else if (event.type === EDGE_FILTER_COLOR) {
+  //     this.changeEdgeColor(event.value);
+  //   }
+  // }
 
-  changeNodeSize(attr) {
-    const { graph: { nodes } } = this.state;
-    const minValue = min(nodes, n => n[attr])[attr];
-    const maxValue = max(nodes, n => n[attr])[attr];
-    const rscale = d3.scaleLinear().domain([minValue, maxValue]).range([6, 30]);
+  // changeNodeSize(attr) {
+  //   const { graph: { nodes } } = this.state;
+  //   const minValue = min(nodes, n => n[attr])[attr];
+  //   const maxValue = max(nodes, n => n[attr])[attr];
+  //   const rscale = d3.scaleLinear().domain([minValue, maxValue]).range([6, 30]);
+  //
+  //   nodes.map(n => {
+  //     n.size = rscale(n[attr])
+  //   });
+  // }
 
-    nodes.map(n => {
-      n.size = rscale(n[attr])
-    });
-  }
+  // changeNodeColor(attr) {
+  //   const { graph: { nodes } } = this.state;
+  //
+  //   const color = d3.scaleLinear()
+  //     .domain([-1, 0, 1])
+  //     .range(['red', 'white', 'green']);
+  //
+  //   nodes.map(n => {
+  //     n.color = color(n[attr])
+  //   });
+  // }
 
-  changeNodeColor(attr) {
-    const { graph: { nodes } } = this.state;
+  // changeEdgeWidth(attr) {
+  //   const { graph: { links } } = this.state;
+  //   const minValue = min(links, l => l[attr])[attr];
+  //   const maxValue = max(links, l => l[attr])[attr];
+  //   const rscale = d3.scaleLinear().domain([minValue, maxValue]).range([1, 5]);
+  //
+  //   links.map(l => {
+  //     l.width = rscale(l[attr])
+  //   });
+  // }
 
-    const color = d3.scaleLinear()
-      .domain([-1, 0, 1])
-      .range(['red', 'white', 'green']);
-
-    nodes.map(n => {
-      n.color = color(n[attr])
-    });
-  }
-
-  changeEdgeWidth(attr) {
-    const { graph: { links } } = this.state;
-    const minValue = min(links, l => l[attr])[attr];
-    const maxValue = max(links, l => l[attr])[attr];
-    const rscale = d3.scaleLinear().domain([minValue, maxValue]).range([1, 5]);
-
-    links.map(l => {
-      l.width = rscale(l[attr])
-    });
-  }
-
-  changeEdgeColor(attr) {
-    const { graph: { links } } = this.state;
-
-    const color = d3.scaleLinear()
-      .domain([-1, 0, 1])
-      .range(['red', 'black', 'green']);
-
-    links.map(l => {
-      l.color = color(l[attr])
-    });
-  }
+  // changeEdgeColor(attr) {
+  //   const { graph: { links } } = this.state;
+  //
+  //   const color = d3.scaleLinear()
+  //     .domain([-1, 0, 1])
+  //     .range(['red', 'black', 'green']);
+  //
+  //   links.map(l => {
+  //     l.color = color(l[attr])
+  //   });
+  // }
 
   createGraph() {
     const { origin } = this.state;
@@ -220,7 +215,7 @@ class App extends Component {
             {graph && <Graph data={graph} /> }
           </Grid>
           <Grid item xs={4}>
-            {graph && <FilterControls onFilterChange={(event) => this.onFilterChange(event)}/> }
+            <FilterContainer />
           </Grid>
         </Grid>
       </div>
