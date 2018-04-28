@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import codecs
 import json
-import pandas as pd
 import numpy as np
+import pandas as pd
 import networkx as nx
 from collections import defaultdict
 
