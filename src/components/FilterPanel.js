@@ -31,6 +31,8 @@ class FilterPanel extends Component {
     onNodeColorChange: PropTypes.func.isRequired,
     onEdgeWidthChange: PropTypes.func.isRequired,
     onEdgeColorChange: PropTypes.func.isRequired,
+
+    selectedGraphId: PropTypes.string,
   };
 
   render() {
@@ -50,6 +52,8 @@ class FilterPanel extends Component {
       onNodeColorChange,
       onEdgeWidthChange,
       onEdgeColorChange,
+
+      selectedGraphId,
     } = this.props;
 
     return (
@@ -64,14 +68,14 @@ class FilterPanel extends Component {
               label="Grösse"
               list={nodeSizeList}
               value={nodeSize}
-              onChange={(value) => onNodeSizeChange(value)}
+              onChange={(value) => onNodeSizeChange(value, selectedGraphId)}
             />
             <FilterSelect
               id="nodeColor"
               label="Farbe"
               list={nodeColorList}
               value={nodeColor}
-              onChange={(value) => onNodeColorChange(value)}
+              onChange={(value) => onNodeColorChange(value, selectedGraphId)}
             />
             {/*<FilterSelect id="nodeCycle" label="Zyklen" list={nodeSizeColors} value={} onChange={} />*/}
           </ExpansionPanelDetails>
@@ -86,14 +90,14 @@ class FilterPanel extends Component {
               label="Stärke"
               list={edgeWidthList}
               value={edgeWidth}
-              onChange={(value) => onEdgeWidthChange(value)}
+              onChange={(value) => onEdgeWidthChange(value, selectedGraphId)}
             />
             <FilterSelect
               id="edgeColor"
               label="Farbe"
               list={edgeColorList}
               value={edgeColor}
-              onChange={(value) => onEdgeColorChange(value)}
+              onChange={(value) => onEdgeColorChange(value, selectedGraphId)}
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>

@@ -93,19 +93,19 @@ export const graphs = (state = {}, action) => {
       state[action.id] = graph;
       return state;
     case SET_NODE_SIZE_FILTER:
-      graph = state[action.id];
+      graph = state[action.graphId];
       changeNodeSize(graph, action.filter);
       return state;
     case SET_NODE_COLOR_FILTER:
-      graph = state[action.id];
+      graph = state[action.graphId];
       changeNodeColor(graph, action.filter);
       return state;
     case SET_EDGE_WIDTH_FILTER:
-      graph = state[action.id];
+      graph = state[action.graphId];
       changeEdgeWidth(graph, action.filter);
       return state;
     case SET_EDGE_COLOR_FILTER:
-      graph = state[action.id];
+      graph = state[action.graphId];
       changeEdgeColor(graph, action.filter);
       return state;
     default:
@@ -113,7 +113,7 @@ export const graphs = (state = {}, action) => {
   }
 };
 
-export const selectedGraph = (state = null, action) => {
+export const selectedGraphId = (state = null, action) => {
   switch (action.type) {
     case SELECT_GRAPH:
       state = action.id;
@@ -124,4 +124,4 @@ export const selectedGraph = (state = null, action) => {
 };
 
 export const getGraph = (state, id) => state.graphs[id];
-export const getSelectedGraph = state => getGraph(state, state.selectedGraph);
+export const getSelectedGraph = state => getGraph(state, state.selectedGraphId);

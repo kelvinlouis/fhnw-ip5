@@ -19,13 +19,16 @@ const mapStateToProps = state => ({
   nodeColor: state.nodeColorFilter,
   edgeWidth: state.edgeWidthFilter,
   edgeColor: state.edgeColorFilter,
+
+  // Selected graph (id)
+  selectedGraphId: state.selectedGraphId,
 });
 
 const mapDispatchToProps = dispatch => ({
-  onNodeSizeChange: value => dispatch(setNodeSizeFilter(value)),
-  onNodeColorChange: value => dispatch(setNodeColorFilter(value)),
-  onEdgeWidthChange: value => dispatch(setEdgeWidthFilter(value)),
-  onEdgeColorChange: value => dispatch(setEdgeColorFilter(value)),
+  onNodeSizeChange: (value, graphId) => dispatch(setNodeSizeFilter(value, graphId)),
+  onNodeColorChange: (value, graphId) => dispatch(setNodeColorFilter(value, graphId)),
+  onEdgeWidthChange: (value, graphId) => dispatch(setEdgeWidthFilter(value, graphId)),
+  onEdgeColorChange: (value, graphId) => dispatch(setEdgeColorFilter(value, graphId)),
 });
 
 const FilterContainer = connect(

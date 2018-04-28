@@ -20,10 +20,10 @@ const GRAPH_DATA_PATH = `${process.env.PUBLIC_URL}/graph_data`;
  * Local Storage key where currently selected graph is stored
  * @type {string}
  */
-const LOCAL_STORAGE_SELECTED_GRAPH = 'selectedGraph';
+const LOCAL_STORAGE_SELECTED_GRAPH = 'selectedGraphId';
 
 const mapStateToProps = state => ({
-  selectedGraph: state.selectedGraph,
+  selectedGraphId: state.selectedGraphId,
 });
 
 class App extends Component {
@@ -99,7 +99,7 @@ class App extends Component {
    * @returns {*}
    */
   render() {
-    const { selectedGraph } = this.props;
+    const { selectedGraphId } = this.props;
 
     return (
       <div className="App">
@@ -113,7 +113,7 @@ class App extends Component {
             {/*<SettingsPanel />*/}
           </Grid>
         </Grid>
-        {!selectedGraph && <GraphLoader onSelected={this.onSelected} />}
+        {!selectedGraphId && <GraphLoader onSelected={this.onSelected} />}
       </div>
     );
   }
