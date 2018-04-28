@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import CssBaseline from 'material-ui/CssBaseline';
 import Grid from 'material-ui/Grid';
 import './App.css';
-import { setGraph } from './actions';
+import { addGraph, selectGraph } from './actions';
+import GraphLoader from './components/GraphLoader/GraphLoader';
+import SettingsPanel from './components/SettingsPanel';
 import GraphContainer from './containers/GraphContainer';
 import FilterContainer from './containers/FilterContainer';
 
@@ -15,16 +17,14 @@ import FilterContainer from './containers/FilterContainer';
 const GRAPH_DATA_PATH = `${process.env.PUBLIC_URL}/graph_data`;
 
 /**
- * Default graph file to interpret
+ * Local Storage key where currently selected graph is stored
  * @type {string}
  */
-const GRAPH_DEFAULT_FILE = 'graph.json';
+const LOCAL_STORAGE_SELECTED_GRAPH = 'selectedGraph';
 
-/**
- * Uses the value of this search param to eventually fetch the file.
- * @type {string}
- */
-const URL_PARAM_FILE = 'file';
+const mapStateToProps = state => ({
+  selectedGraph: state.selectedGraph,
+});
 
 class App extends Component {
   static propTypes = {
@@ -32,16 +32,28 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    this.getGraphData();
+    // Look for previous selected graph, by checking local storage
+    const id = localStorage.getItem(LOCAL_STORAGE_SELECTED_GRAPH);
+
+    if (id) {
+      await this.getGraphData(id);
+      this.selectGraph(id);
+    }
   }
 
-  /**
-   * Returns the file name passed via the search param.
-   * @returns {string | null}
-   */
-  extractFilenameFromUrl() {
-    const params = new URLSearchParams(document.location.search);
-    return params.get(URL_PARAM_FILE);
+  constructor(props) {
+    super(props);
+  }
+
+  onSelected = async (id) => {
+    localStorage.setItem(LOCAL_STORAGE_SELECTED_GRAPH, id);
+    await this.getGraphData(id);
+    this.selectGraph(id);
+  };
+
+  selectGraph(id) {
+    const { dispatch } = this.props;
+    dispatch(selectGraph(id));
   }
 
   /**
@@ -49,17 +61,16 @@ class App extends Component {
    *
    * @returns {Promise<void>}
    */
-  async getGraphData() {
+  async getGraphData(id) {
     const { dispatch } = this.props;
-    let jsonFile = this.extractFilenameFromUrl();
 
-    if (!jsonFile) {
-      console.warn(`No file was passed. Use default: ${GRAPH_DEFAULT_FILE}`);
-      jsonFile = GRAPH_DEFAULT_FILE;
+    if (!id) {
+      console.warn('No Graph ID was passed');
+      return;
     }
 
     try {
-      const response = await fetch(`${GRAPH_DATA_PATH}/${jsonFile}`, {
+      const response = await fetch(`${GRAPH_DATA_PATH}/${id}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -71,9 +82,10 @@ class App extends Component {
       if (response.ok) {
         // Response was successful set data
         const json = await response.json();
-        dispatch(setGraph(json));
+
+        dispatch(addGraph(id, json));
       } else {
-        console.error('File not found');
+        console.error('Graph not found');
       }
     } catch(err) {
       console.error(`Error occurred while fetching: ${err.message}`);
@@ -87,20 +99,24 @@ class App extends Component {
    * @returns {*}
    */
   render() {
+    const { selectedGraph } = this.props;
+
     return (
       <div className="App">
         <CssBaseline />
         <Grid container spacing={16}>
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             <GraphContainer />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <FilterContainer />
+            {/*<SettingsPanel />*/}
           </Grid>
         </Grid>
+        {!selectedGraph && <GraphLoader onSelected={this.onSelected} />}
       </div>
     );
   }
 }
 
-export default connect()(App);
+export default connect(mapStateToProps)(App);

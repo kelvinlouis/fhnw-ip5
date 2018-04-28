@@ -7,30 +7,26 @@ import {
 } from '../actions';
 import FilterPanel from '../components/FilterPanel';
 
-const mapStateToProps = state => {
-  return {
-    // A list of all filters Array<String>
-    nodeSizeList: state.nodeSizeFilterList,
-    nodeColorList: state.nodeColorFilterList,
-    edgeWidthList: state.edgeWidthFilterList,
-    edgeColorList: state.edgeColorFilterList,
+const mapStateToProps = state => ({
+  // A list of all filters Array<String>
+  nodeSizeList: state.nodeSizeFilterList,
+  nodeColorList: state.nodeColorFilterList,
+  edgeWidthList: state.edgeWidthFilterList,
+  edgeColorList: state.edgeColorFilterList,
 
-    // Selected filter
-    nodeSize: state.nodeSizeFilter,
-    nodeColor: state.nodeColorFilter,
-    edgeWidth: state.edgeWidthFilter,
-    edgeColor: state.edgeColorFilter,
-  }
-};
+  // Selected filter
+  nodeSize: state.nodeSizeFilter,
+  nodeColor: state.nodeColorFilter,
+  edgeWidth: state.edgeWidthFilter,
+  edgeColor: state.edgeColorFilter,
+});
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onNodeSizeChange: value => dispatch(setNodeSizeFilter(value)),
-    onNodeColorChange: value => dispatch(setNodeColorFilter(value)),
-    onEdgeWidthChange: value => dispatch(setEdgeWidthFilter(value)),
-    onEdgeColorChange: value => dispatch(setEdgeColorFilter(value)),
-  }
-};
+const mapDispatchToProps = dispatch => ({
+  onNodeSizeChange: value => dispatch(setNodeSizeFilter(value)),
+  onNodeColorChange: value => dispatch(setNodeColorFilter(value)),
+  onEdgeWidthChange: value => dispatch(setEdgeWidthFilter(value)),
+  onEdgeColorChange: value => dispatch(setEdgeColorFilter(value)),
+});
 
 const FilterContainer = connect(
   mapStateToProps,

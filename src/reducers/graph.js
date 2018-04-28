@@ -1,5 +1,6 @@
 import {
-  SET_GRAPH,
+  ADD_GRAPH,
+  SELECT_GRAPH,
   SET_NODE_SIZE_FILTER,
   SET_NODE_COLOR_FILTER,
   SET_EDGE_WIDTH_FILTER,
@@ -27,7 +28,12 @@ function createGraph(origin) {
     }, l);
   });
 
-  return { nodes, links };
+  return {
+    id: origin.id,
+    name:origin.name,
+    nodes,
+    links
+  };
 }
 
 function changeNodeSize(graph, attr) {
@@ -46,7 +52,7 @@ function changeNodeColor(graph, attr) {
 
   const color = d3.scaleLinear()
     .domain([-1, 0, 1])
-    .range(['red', 'white', 'green']);
+    .range(['red', 'black', 'green']);
 
   nodes.map(n => {
     n.color = color(n[attr])
@@ -76,23 +82,46 @@ function changeEdgeColor(graph, attr) {
   });
 }
 
-export const selectedGraph = (state = null, action) => {
+export const graphs = (state = {}, action) => {
+  let graph;
+
   switch (action.type) {
-    case SET_GRAPH:
-      return createGraph(action.data);
+    case ADD_GRAPH:
+      // Pushes the received graph into a map for
+      // internal storage
+      graph = createGraph(action.data);
+      state[action.id] = graph;
+      return state;
     case SET_NODE_SIZE_FILTER:
-      changeNodeSize(state, action.filter);
+      graph = state[action.id];
+      changeNodeSize(graph, action.filter);
       return state;
     case SET_NODE_COLOR_FILTER:
-      changeNodeColor(state, action.filter);
+      graph = state[action.id];
+      changeNodeColor(graph, action.filter);
       return state;
     case SET_EDGE_WIDTH_FILTER:
-      changeEdgeWidth(state, action.filter);
+      graph = state[action.id];
+      changeEdgeWidth(graph, action.filter);
       return state;
     case SET_EDGE_COLOR_FILTER:
-      changeEdgeColor(state, action.filter);
+      graph = state[action.id];
+      changeEdgeColor(graph, action.filter);
       return state;
     default:
       return state;
   }
 };
+
+export const selectedGraph = (state = null, action) => {
+  switch (action.type) {
+    case SELECT_GRAPH:
+      state = action.id;
+      return state;
+    default:
+      return state;
+  }
+};
+
+export const getGraph = (state, id) => state.graphs[id];
+export const getSelectedGraph = state => getGraph(state, state.selectedGraph);

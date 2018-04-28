@@ -55,6 +55,7 @@ function transform(d) {
 class Graph extends Component {
   static propTypes = {
     data: PropTypes.shape({
+      id: PropTypes.string,
       nodes: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string,
         label: PropTypes.string,
@@ -73,13 +74,13 @@ class Graph extends Component {
   componentDidUpdate() {
     const { data } = this.props;
 
-    if (data === null) return;
+    if (!data) return;
 
     const svg = d3.select('svg');
     const width = +svg.attr('width');
     const height = +svg.attr('height');
     const simulation = d3.forceSimulation()
-      .force('link', d3.forceLink().id(d => d.id).distance(150)/*.distance(d => radius(d.source.r / 2) + radius(d.target.r / 2))*/)
+      .force('link', d3.forceLink().id(d => d.id).distance(200)/*.distance(d => radius(d.source.r / 2) + radius(d.target.r / 2))*/)
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(width / 2, height / 2));
 
@@ -172,12 +173,11 @@ class Graph extends Component {
 
   render() {
     const { data } = this.props;
-    if (data === null) <div />;
-    console.log('Graph', data);
+    if (!data) <div />;
 
     return (
       <div className="Graph">
-        <svg width="600" height="500"/>
+        <svg width="800" height="700"/>
       </div>
     );
   }
