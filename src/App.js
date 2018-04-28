@@ -6,9 +6,9 @@ import Grid from 'material-ui/Grid';
 import './App.css';
 import { addGraph, selectGraph } from './actions';
 import GraphLoader from './components/GraphLoader/GraphLoader';
-import SettingsPanel from './components/SettingsPanel';
+import GraphPanel from './components/GraphPanel';
 import GraphContainer from './containers/GraphContainer';
-import FilterContainer from './containers/FilterContainer';
+import GraphPanelContainer from './containers/GraphPanelContainer';
 
 /**
  * Path where all the graphs are exported by Jupyter
@@ -109,8 +109,7 @@ class App extends Component {
             <GraphContainer />
           </Grid>
           <Grid item xs={3}>
-            <FilterContainer />
-            {/*<SettingsPanel />*/}
+            <GraphPanelContainer />
           </Grid>
         </Grid>
         {!selectedGraphId && <GraphLoader onSelected={this.onSelected} />}

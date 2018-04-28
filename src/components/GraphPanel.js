@@ -7,15 +7,20 @@ import ExpansionPanel, {
 } from 'material-ui/ExpansionPanel';
 import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import TextField from 'material-ui/TextField';
+import Button from 'material-ui/Button';
 import FilterSelect from '../components/FilterSelect';
 
 const styles = {
   controlContainer: {
     'flex-flow': 'wrap',
   },
+  input: {
+    'width': '100%',
+  }
 };
 
-class FilterPanel extends Component {
+class GraphPanel extends Component {
   static propTypes = {
     nodeSizeList: PropTypes.arrayOf(PropTypes.string).isRequired,
     nodeColorList: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -32,7 +37,42 @@ class FilterPanel extends Component {
     onEdgeWidthChange: PropTypes.func.isRequired,
     onEdgeColorChange: PropTypes.func.isRequired,
 
-    selectedGraphId: PropTypes.string,
+    selectedGraph: PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.string,
+    }),
+  };
+
+  constructor(props) {
+    super(props);
+    if (props.selectedGraph) {
+      this.state = {
+        name: props.selectedGraph.name,
+      }
+    } else {
+      this.state = {
+        name: '',
+      }
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.selectedGraph) {
+      return {
+        name: nextProps.selectedGraph.name,
+      };
+    }
+
+    return prevState;
+  }
+
+  onNameChange = event => {
+    this.setState({ name: event.target.value });
+  };
+
+  save = event => {
+    const { name } = this.state;
+    console.log('save', name);
   };
 
   render() {
@@ -53,11 +93,13 @@ class FilterPanel extends Component {
       onEdgeWidthChange,
       onEdgeColorChange,
 
-      selectedGraphId,
+      selectedGraph,
     } = this.props;
 
+    const { name } = this.state;
+
     return (
-      <div className="FilterPanel">
+      <div className="GraphPanel">
         <ExpansionPanel>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Knoten</Typography>
@@ -68,14 +110,14 @@ class FilterPanel extends Component {
               label="Grösse"
               list={nodeSizeList}
               value={nodeSize}
-              onChange={(value) => onNodeSizeChange(value, selectedGraphId)}
+              onChange={(value) => onNodeSizeChange(value, selectedGraph.id)}
             />
             <FilterSelect
               id="nodeColor"
               label="Farbe"
               list={nodeColorList}
               value={nodeColor}
-              onChange={(value) => onNodeColorChange(value, selectedGraphId)}
+              onChange={(value) => onNodeColorChange(value, selectedGraph.id)}
             />
             {/*<FilterSelect id="nodeCycle" label="Zyklen" list={nodeSizeColors} value={} onChange={} />*/}
           </ExpansionPanelDetails>
@@ -90,20 +132,51 @@ class FilterPanel extends Component {
               label="Stärke"
               list={edgeWidthList}
               value={edgeWidth}
-              onChange={(value) => onEdgeWidthChange(value, selectedGraphId)}
+              onChange={(value) => onEdgeWidthChange(value, selectedGraph.id)}
             />
             <FilterSelect
               id="edgeColor"
               label="Farbe"
               list={edgeColorList}
               value={edgeColor}
-              onChange={(value) => onEdgeColorChange(value, selectedGraphId)}
+              onChange={(value) => onEdgeColorChange(value, selectedGraph.id)}
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>
+        {selectedGraph && <ExpansionPanel>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>Graph</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails className={classes.controlContainer}>
+            <form className={classes.container} noValidate autoComplete="off">
+              <TextField
+                id="id"
+                label="ID"
+                className={classes.input}
+                value={selectedGraph.id}
+                disabled
+                margin="normal"
+              />
+              <TextField
+                id="name"
+                label="Name"
+                className={classes.input}
+                value={name}
+                onChange={this.onNameChange}
+                margin="normal"
+              />
+              <Button
+                variant="raised"
+                color="primary"
+                onClick={this.save}>
+                Speichern
+              </Button>
+            </form>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>}
       </div>
     );
   }
 }
 
-export default withStyles(styles)(FilterPanel);
+export default withStyles(styles)(GraphPanel);

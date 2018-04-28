@@ -5,7 +5,8 @@ import {
   setEdgeWidthFilter,
   setEdgeColorFilter,
 } from '../actions';
-import FilterPanel from '../components/FilterPanel';
+import GraphPanel from '../components/GraphPanel';
+import { getSelectedGraph } from '../reducers/graph';
 
 const mapStateToProps = state => ({
   // A list of all filters Array<String>
@@ -20,8 +21,8 @@ const mapStateToProps = state => ({
   edgeWidth: state.edgeWidthFilter,
   edgeColor: state.edgeColorFilter,
 
-  // Selected graph (id)
-  selectedGraphId: state.selectedGraphId,
+  // Selected graph
+  selectedGraph: getSelectedGraph(state),
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -31,9 +32,9 @@ const mapDispatchToProps = dispatch => ({
   onEdgeColorChange: (value, graphId) => dispatch(setEdgeColorFilter(value, graphId)),
 });
 
-const FilterContainer = connect(
+const GraphPanelContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(FilterPanel);
+)(GraphPanel);
 
-export default FilterContainer;
+export default GraphPanelContainer;
