@@ -67,10 +67,37 @@ class Graph extends Component {
     onNodeDoubleClick: () => {},
   };
 
-  componentDidUpdate() {
-    const { data } = this.props;
+  constructor(props) {
+    super(props);
 
-    if (!data) return;
+    this.state = {
+      nodes: null,
+      links: null,
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const state = {
+      ...prevState,
+    };
+
+    if (nextProps.data) {
+      if (nextProps.data.nodes) {
+        state.nodes = nextProps.data.nodes.map(n => Object.assign({}, n));
+      }
+
+      if (nextProps.data.links) {
+        state.links = nextProps.data.links.map(l => Object.assign({}, l));
+      }
+    }
+
+    return state;
+  }
+
+  componentDidUpdate() {
+    const { nodes, links } = this.state;
+
+    if (!nodes || !links) return;
 
     const svg = d3.select('svg');
     const width = +svg.attr('width');
@@ -79,9 +106,6 @@ class Graph extends Component {
       .force('link', d3.forceLink().id(d => d.id).distance(200)/*.distance(d => radius(d.source.r / 2) + radius(d.target.r / 2))*/)
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(width / 2, height / 2));
-
-    const links = data.links;
-    const nodes = data.nodes;
 
     svg.append('defs').selectAll('marker')
       .data(['default'])
@@ -131,12 +155,12 @@ class Graph extends Component {
       .text(d => d.label);
 
     simulation
-      .nodes(data.nodes)
+      .nodes(nodes)
       .on('tick', ticked);
 
     simulation
       .force('link')
-      .links(data.links);
+      .links(links);
 
     function ticked() {
       link.attr('d', positionLink)
@@ -168,9 +192,10 @@ class Graph extends Component {
     }
   }
 
-  onNodeDoubleClick(node) {
+  onNodeDoubleClick(clickedNode) {
     const { data: { links, nodes }, onNodeDoubleClick } = this.props;
-    const nodeLinks = links.filter(l => l.source.id === node.id);
+    const node = nodes.find(n => n.id === clickedNode.id);
+    const nodeLinks = links.filter(l => l.source === node.id);
     const targets = nodeLinks.map(l => {
       return nodes.find(n => n.id === l.target);
     });
@@ -179,9 +204,9 @@ class Graph extends Component {
   }
 
   render() {
-    const { data } = this.props;
+    const { nodes, links } = this.state;
 
-    if (!data) return <div />;
+    if (!nodes || !links) return <div />;
 
     return (
       <div className="Graph">
