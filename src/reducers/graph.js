@@ -1,10 +1,11 @@
 import {
   ADD_GRAPH,
   SELECT_GRAPH,
+  CLEAR_SELECTED_GRAPH,
   SET_NODE_SIZE_FILTER,
   SET_NODE_COLOR_FILTER,
   SET_EDGE_WIDTH_FILTER,
-  SET_EDGE_COLOR_FILTER
+  SET_EDGE_COLOR_FILTER,
 } from '../actions'
 import * as d3 from 'd3';
 import { min, max } from 'underscore';
@@ -30,9 +31,9 @@ function createGraph(origin) {
 
   return {
     id: origin.id,
-    name:origin.name,
+    name: origin.name,
     nodes,
-    links
+    links,
   };
 }
 
@@ -118,6 +119,8 @@ export const selectedGraphId = (state = null, action) => {
     case SELECT_GRAPH:
       state = action.id;
       return state;
+    case CLEAR_SELECTED_GRAPH:
+      return null;
     default:
       return state;
   }

@@ -15,9 +15,9 @@ const styles = {
   controlContainer: {
     'flex-flow': 'wrap',
   },
-  input: {
-    'width': '100%',
-  }
+  button: {
+    'margin': '0 0.25em',
+  },
 };
 
 class GraphPanel extends Component {
@@ -36,6 +36,8 @@ class GraphPanel extends Component {
     onNodeColorChange: PropTypes.func.isRequired,
     onEdgeWidthChange: PropTypes.func.isRequired,
     onEdgeColorChange: PropTypes.func.isRequired,
+
+    onLoad: PropTypes.func.isRequired,
 
     selectedGraph: PropTypes.shape({
       id: PropTypes.string,
@@ -71,8 +73,21 @@ class GraphPanel extends Component {
   };
 
   save = event => {
-    const { name } = this.state;
-    console.log('save', name);
+    // fetch(`${process.env.BACKEND_URL}/graph`, {
+    //   // body: JSON.stringify(data), // must match 'Content-Type' header
+    //   cache: 'no-cache',
+    //   credentials: 'same-origin',
+    //   headers: {
+    //     'content-type': 'application/json'
+    //   },
+    //   method: 'POST',
+    //   mode: 'cors',
+    // })
+  };
+
+  load = event => {
+    const { onLoad } = this.props;
+    onLoad();
   };
 
   render() {
@@ -152,7 +167,7 @@ class GraphPanel extends Component {
               <TextField
                 id="id"
                 label="ID"
-                className={classes.input}
+                fullWidth
                 value={selectedGraph.id}
                 disabled
                 margin="normal"
@@ -160,7 +175,7 @@ class GraphPanel extends Component {
               <TextField
                 id="name"
                 label="Name"
-                className={classes.input}
+                fullWidth
                 value={name}
                 onChange={this.onNameChange}
                 margin="normal"
@@ -168,8 +183,16 @@ class GraphPanel extends Component {
               <Button
                 variant="raised"
                 color="primary"
+                className={classes.button}
                 onClick={this.save}>
                 Speichern
+              </Button>
+              <Button
+                variant="raised"
+                color="primary"
+                className={classes.button}
+                onClick={this.load}>
+                Laden...
               </Button>
             </form>
           </ExpansionPanelDetails>

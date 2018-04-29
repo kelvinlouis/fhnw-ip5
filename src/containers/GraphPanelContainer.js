@@ -3,7 +3,7 @@ import {
   setNodeSizeFilter,
   setNodeColorFilter,
   setEdgeWidthFilter,
-  setEdgeColorFilter,
+  setEdgeColorFilter, clearSelectedGraph,
 } from '../actions';
 import GraphPanel from '../components/GraphPanel';
 import { getSelectedGraph } from '../reducers/graph';
@@ -30,6 +30,7 @@ const mapDispatchToProps = dispatch => ({
   onNodeColorChange: (value, graphId) => dispatch(setNodeColorFilter(value, graphId)),
   onEdgeWidthChange: (value, graphId) => dispatch(setEdgeWidthFilter(value, graphId)),
   onEdgeColorChange: (value, graphId) => dispatch(setEdgeColorFilter(value, graphId)),
+  onLoad: () => dispatch(clearSelectedGraph()),
 });
 
 const GraphPanelContainer = connect(

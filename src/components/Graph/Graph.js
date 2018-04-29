@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import './Graph.css';
+import { LinkPropTypes, NodePropTypes } from '../propTypes';
 
 function positionLink(d) {
   let x1 = d.source.x;
@@ -56,19 +57,14 @@ class Graph extends Component {
   static propTypes = {
     data: PropTypes.shape({
       id: PropTypes.string,
-      nodes: PropTypes.arrayOf(PropTypes.shape({
-        id: PropTypes.string,
-        label: PropTypes.string,
-        size: PropTypes.number,
-        color: PropTypes.string,
-      })),
-      links: PropTypes.arrayOf(PropTypes.shape({
-        source: PropTypes.string,
-        target: PropTypes.string,
-        width: PropTypes.number,
-        color: PropTypes.string,
-      })),
+      nodes: PropTypes.arrayOf(NodePropTypes),
+      links: PropTypes.arrayOf(LinkPropTypes),
     }),
+    onNodeDoubleClick: PropTypes.func,
+  };
+
+  static defaultProps = {
+    onNodeDoubleClick: () => {},
   };
 
   componentDidUpdate() {
@@ -118,6 +114,7 @@ class Graph extends Component {
       .attr('class', 'node')
       .attr('r', d => d.size)
       .attr('fill', d => d.color)
+      .on("dblclick", (d) => this.onNodeDoubleClick(d))
       .call(d3.drag()
         .on('start', dragstarted)
         .on('drag', dragged)
@@ -171,9 +168,20 @@ class Graph extends Component {
     }
   }
 
+  onNodeDoubleClick(node) {
+    const { data: { links, nodes }, onNodeDoubleClick } = this.props;
+    const nodeLinks = links.filter(l => l.source.id === node.id);
+    const targets = nodeLinks.map(l => {
+      return nodes.find(n => n.id === l.target);
+    });
+
+    onNodeDoubleClick(node, nodeLinks, targets);
+  }
+
   render() {
     const { data } = this.props;
-    if (!data) <div />;
+
+    if (!data) return <div />;
 
     return (
       <div className="Graph">
