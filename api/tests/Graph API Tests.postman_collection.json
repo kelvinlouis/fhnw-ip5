@@ -1,0 +1,574 @@
+{
+	"info": {
+		"_postman_id": "54d7e9ac-9a7f-4d9e-8775-da2a4faeb406",
+		"name": "Graph API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Test if DB is empty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"No graphs in database\"] = jsonData.graphs.length === 0;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add graph",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Graph created\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Graph has id 1\"] = jsonData.id === 1;",
+							"tests[\"Graph name saved\"] = jsonData.name === 'Test_1';",
+							"tests[\"Same node count\"] = jsonData.nodes.length === 8;",
+							"tests[\"Same edge count\"] = jsonData.links.length === 10;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test_1\",\n    \"nodes\": [\n        {\n            \"id\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"label\": \"hyperaktiv, unkonzentriert\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"label\": \"Codierung als \\\"schwieriges Kind\\\" / Ausschluss\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"label\": \"Selbstwert\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"label\": \"Versagensangst\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"label\": \"Abwertung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"label\": \"Selbstwirksamkeit\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"label\": \"Ohnmacht\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"label\": \"passive Verweigerung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        }\n    ],\n    \"links\": [\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 0,\n            \"weaken\": 1,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"target\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"target\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get graph id:1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Graph found\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Graph has id 1\"] = jsonData.id === 1;",
+							"tests[\"Graph name saved\"] = jsonData.name === 'Test_1';",
+							"tests[\"Same node count\"] = jsonData.nodes.length === 8;",
+							"tests[\"Same edge count\"] = jsonData.links.length === 10;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test_1\",\n    \"nodes\": [\n        {\n            \"id\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"label\": \"hyperaktiv, unkonzentriert\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"label\": \"Codierung als \\\"schwieriges Kind\\\" / Ausschluss\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"label\": \"Selbstwert\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"label\": \"Versagensangst\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"label\": \"Abwertung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"label\": \"Selbstwirksamkeit\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"label\": \"Ohnmacht\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"label\": \"passive Verweigerung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        }\n    ],\n    \"links\": [\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 0,\n            \"weaken\": 1,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"target\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"target\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add other graph",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Graph created\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Graph has id 2\"] = jsonData.id === 2;",
+							"tests[\"Graph name saved\"] = jsonData.name === 'Test_2';",
+							"tests[\"Same node count\"] = jsonData.nodes.length === 8;",
+							"tests[\"Same edge count\"] = jsonData.links.length === 10;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test_2\",\n    \"nodes\": [\n        {\n            \"id\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"label\": \"hyperaktiv, unkonzentriert\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"label\": \"Codierung als \\\"schwieriges Kind\\\" / Ausschluss\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"label\": \"Selbstwert\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"label\": \"Versagensangst\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"label\": \"Abwertung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"label\": \"Selbstwirksamkeit\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"label\": \"Ohnmacht\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"label\": \"passive Verweigerung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        }\n    ],\n    \"links\": [\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 0,\n            \"weaken\": 1,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"target\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"target\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all graphs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Graphs found\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Two graphs in database\"] = jsonData.graphs.length === 2;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test_1\",\n    \"nodes\": [\n        {\n            \"id\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"label\": \"hyperaktiv, unkonzentriert\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"label\": \"Codierung als \\\"schwieriges Kind\\\" / Ausschluss\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"label\": \"Selbstwert\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"label\": \"Versagensangst\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"label\": \"Abwertung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"label\": \"Selbstwirksamkeit\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"label\": \"Ohnmacht\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"label\": \"passive Verweigerung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        }\n    ],\n    \"links\": [\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 0,\n            \"weaken\": 1,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"target\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"target\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get graph snapshot id:2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Graph created\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Graph has id 2\"] = jsonData.id === 2;",
+							"tests[\"Graph name saved\"] = jsonData.name === 'Test_2';",
+							"tests[\"Same node count\"] = jsonData.nodes.length === 8;",
+							"tests[\"Same edge count\"] = jsonData.links.length === 11;",
+							"tests[\"Weight changed to 1\"] = jsonData.links[0].weight === 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test_2\",\n    \"nodes\": [\n        {\n            \"id\": \"71edd666-bf3a-80bb-9026-def01fd5d661\",\n            \"label\": \"Egozentrismus\",\n            \"influence\": -1,\n            \"actionSystemId\": \"2adc14e2-9aea-deb0-4f8e-8a66795d24e7\",\n            \"actionSystem\": \"Familiensystem\"\n        },\n        {\n            \"id\": \"4a2eb075-ed56-746c-dee2-6a69c42318ec\",\n            \"label\": \"innere Leere\",\n            \"influence\": -1,\n            \"actionSystemId\": \"2adc14e2-9aea-deb0-4f8e-8a66795d24e7\",\n            \"actionSystem\": \"Familiensystem\"\n        },\n        {\n            \"id\": \"961272d7-8c30-8b18-6670-784cb3e06c5d\",\n            \"label\": \"Suche nach soz. Resonanz\",\n            \"influence\": 0,\n            \"actionSystemId\": \"2adc14e2-9aea-deb0-4f8e-8a66795d24e7\",\n            \"actionSystem\": \"Familiensystem\"\n        },\n        {\n            \"id\": \"f7d4ac56-32cc-b490-fd33-8f89ddbb1392\",\n            \"label\": \"Aktivitäten/\\\"Leistung\\\"\",\n            \"influence\": 0,\n            \"actionSystemId\": \"2adc14e2-9aea-deb0-4f8e-8a66795d24e7\",\n            \"actionSystem\": \"Familiensystem\"\n        },\n        {\n            \"id\": \"dc966b8f-b515-5978-c76d-e1b3c8804a86\",\n            \"label\": \"Aktivitäten/\\\"Wert testen\\\"\",\n            \"influence\": 0,\n            \"actionSystemId\": \"2adc14e2-9aea-deb0-4f8e-8a66795d24e7\",\n            \"actionSystem\": \"Familiensystem\"\n        },\n        {\n            \"id\": \"f6565ac0-29c4-5a07-db02-e35356901e07\",\n            \"label\": \"Selbständigkeit, Ressourcen\",\n            \"influence\": 1,\n            \"actionSystemId\": \"2adc14e2-9aea-deb0-4f8e-8a66795d24e7\",\n            \"actionSystem\": \"Familiensystem\"\n        },\n        {\n            \"id\": \"5b465336-26d8-e63e-1ed1-34a0e50ea5da\",\n            \"label\": \"Glück hinterm Horizont\",\n            \"influence\": 1,\n            \"actionSystemId\": \"2adc14e2-9aea-deb0-4f8e-8a66795d24e7\",\n            \"actionSystem\": \"Familiensystem\"\n        },\n        {\n            \"id\": \"f3d817c5-fbd0-9ab9-da33-ef1467efff30\",\n            \"label\": \"Weggehen\",\n            \"influence\": -1,\n            \"actionSystemId\": \"2adc14e2-9aea-deb0-4f8e-8a66795d24e7\",\n            \"actionSystem\": \"Familiensystem\"\n        }\n    ],\n    \"links\": [\n        {\n            \"source\": \"71edd666-bf3a-80bb-9026-def01fd5d661\",\n            \"target\": \"4a2eb075-ed56-746c-dee2-6a69c42318ec\",\n            \"weight\": 1,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"4a2eb075-ed56-746c-dee2-6a69c42318ec\",\n            \"target\": \"961272d7-8c30-8b18-6670-784cb3e06c5d\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"961272d7-8c30-8b18-6670-784cb3e06c5d\",\n            \"target\": \"f7d4ac56-32cc-b490-fd33-8f89ddbb1392\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"961272d7-8c30-8b18-6670-784cb3e06c5d\",\n            \"target\": \"dc966b8f-b515-5978-c76d-e1b3c8804a86\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"f7d4ac56-32cc-b490-fd33-8f89ddbb1392\",\n            \"target\": \"71edd666-bf3a-80bb-9026-def01fd5d661\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"f7d4ac56-32cc-b490-fd33-8f89ddbb1392\",\n            \"target\": \"4a2eb075-ed56-746c-dee2-6a69c42318ec\",\n            \"weight\": -1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 0,\n            \"weaken\": 1,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"f7d4ac56-32cc-b490-fd33-8f89ddbb1392\",\n            \"target\": \"f6565ac0-29c4-5a07-db02-e35356901e07\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"f6565ac0-29c4-5a07-db02-e35356901e07\",\n            \"target\": \"f7d4ac56-32cc-b490-fd33-8f89ddbb1392\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"f6565ac0-29c4-5a07-db02-e35356901e07\",\n            \"target\": \"5b465336-26d8-e63e-1ed1-34a0e50ea5da\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"5b465336-26d8-e63e-1ed1-34a0e50ea5da\",\n            \"target\": \"f3d817c5-fbd0-9ab9-da33-ef1467efff30\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"f3d817c5-fbd0-9ab9-da33-ef1467efff30\",\n            \"target\": \"4a2eb075-ed56-746c-dee2-6a69c42318ec\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/2/snapshot",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						"2",
+						"snapshot"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get graph id:2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5b623dce-f9b5-4b44-9cdb-43718433adcb",
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Graph found\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Graph has id 2\"] = jsonData.id === 2;",
+							"tests[\"Graph name saved\"] = jsonData.name === 'Test_2';",
+							"tests[\"Same node count\"] = jsonData.nodes.length === 8;",
+							"tests[\"Same edge count\"] = jsonData.links.length === 10;",
+							"tests[\"Weight still 2\"] = jsonData.links[0].weight === 2;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test_1\",\n    \"nodes\": [\n        {\n            \"id\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"label\": \"hyperaktiv, unkonzentriert\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"label\": \"Codierung als \\\"schwieriges Kind\\\" / Ausschluss\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"label\": \"Selbstwert\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"label\": \"Versagensangst\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"label\": \"Abwertung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"label\": \"Selbstwirksamkeit\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"label\": \"Ohnmacht\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"label\": \"passive Verweigerung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        }\n    ],\n    \"links\": [\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 0,\n            \"weaken\": 1,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"target\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"target\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete graph id:2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Graph deleted\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test_1\",\n    \"nodes\": [\n        {\n            \"id\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"label\": \"hyperaktiv, unkonzentriert\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"label\": \"Codierung als \\\"schwieriges Kind\\\" / Ausschluss\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"label\": \"Selbstwert\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"label\": \"Versagensangst\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"label\": \"Abwertung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"label\": \"Selbstwirksamkeit\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"label\": \"Ohnmacht\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"label\": \"passive Verweigerung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        }\n    ],\n    \"links\": [\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 0,\n            \"weaken\": 1,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"target\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"target\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fields Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6b83b778-2b6e-4fa1-9eaa-f9302d3588b3",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Contains only requested fields/values\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.graphs).to.not.have.members([{\"id\": 1,\"name\": \"Test_1\"}]);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test_1\",\n    \"nodes\": [\n        {\n            \"id\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"label\": \"hyperaktiv, unkonzentriert\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"label\": \"Codierung als \\\"schwieriges Kind\\\" / Ausschluss\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"label\": \"Selbstwert\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"label\": \"Versagensangst\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"label\": \"Abwertung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"label\": \"Selbstwirksamkeit\",\n            \"influence\": 1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"label\": \"Ohnmacht\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        },\n        {\n            \"id\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"label\": \"passive Verweigerung\",\n            \"influence\": -1,\n            \"actionSystemId\": \"77fa1ee6-8811-373d-703c-d86ecec96b1a\",\n            \"actionSystem\": \"Heim\"\n        }\n    ],\n    \"links\": [\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"4d9c72ee-a9de-4ac3-6019-f20ac043554a\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"target\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"weight\": 1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 1,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"cbf297d0-1a64-6b66-39de-6062596a5021\",\n            \"target\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"weight\": -1,\n            \"weight_absolute\": 1,\n            \"strengthen\": 0,\n            \"weaken\": 1,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"110d1354-24c8-d4d0-8203-ab5a1547656a\",\n            \"target\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"7a75a69a-70c0-9888-0bdf-15fd93afc12f\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"target\": \"0922f384-a79f-4c69-ea26-dea557173f0d\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        },\n        {\n            \"source\": \"a9c77ea6-b6f2-8412-c513-633160624ff7\",\n            \"target\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"weight\": -2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 0,\n            \"weaken\": 2,\n            \"sign\": -1\n        },\n        {\n            \"source\": \"814a501e-a68a-e5cc-2dcd-87824cea4998\",\n            \"target\": \"deba889a-1b26-09bc-6786-6612f89108dd\",\n            \"weight\": 2,\n            \"weight_absolute\": 2,\n            \"strengthen\": 2,\n            \"weaken\": 0,\n            \"sign\": 1\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/?fields=id,name",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						""
+					],
+					"query": [
+						{
+							"key": "fields",
+							"value": "id,name"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get empty filter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c851806e-a174-42d9-81d1-0a4cc891e561",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Filters are empty\", function () {",
+							"    pm.expect(jsonData.filters.nodeSize).to.eql(\"\");",
+							"    pm.expect(jsonData.filters.nodeColor).to.eql(\"\");",
+							"    pm.expect(jsonData.filters.linkWidth).to.eql(\"\");",
+							"    pm.expect(jsonData.filters.linkColor).to.eql(\"\");",
+							"});",
+							"",
+							"pm.test(\"Options are available\", function () {",
+							"    pm.expect(jsonData.filters.nodeSizeOptions.length).to.be.at.least(1);",
+							"    pm.expect(jsonData.filters.nodeColorOptions.length).to.be.at.least(1);",
+							"    pm.expect(jsonData.filters.linkWidthOptions.length).to.be.at.least(1);",
+							"    pm.expect(jsonData.filters.linkColorOptions.length).to.be.at.least(1);",
+							"});",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/1/filters",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						"1",
+						"filters"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save Filter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "985f71dd-4402-4c1c-81f8-44d4f66999bb",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"",
+							"pm.test(\"Filters are correct\", function () {",
+							"    pm.expect(jsonData.filters.nodeSize).to.eql(\"degree\");",
+							"    pm.expect(jsonData.filters.nodeColor).to.eql(\"in_degree\");",
+							"    pm.expect(jsonData.filters.linkWidth).to.eql(\"\");",
+							"    pm.expect(jsonData.filters.linkColor).to.eql(\"sign\");",
+							"});",
+							"",
+							"pm.test(\"Options are available\", function () {",
+							"    pm.expect(jsonData.filters.nodeSizeOptions.length).to.be.at.least(1);",
+							"    pm.expect(jsonData.filters.nodeColorOptions.length).to.be.at.least(1);",
+							"    pm.expect(jsonData.filters.linkWidthOptions.length).to.be.at.least(1);",
+							"    pm.expect(jsonData.filters.linkColorOptions.length).to.be.at.least(1);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"filters\": {\r\n    \"nodeSize\": \"degree\", \r\n    \"nodeColor\": \"in_degree\", \r\n    \"linkWidth\": \"NON_OPTION\", \r\n    \"linkColor\": \"sign\", \r\n    \"nodeSizeOptions\": [\r\n      \"degree\", \r\n      \"degree_strengthen\", \r\n      \"degree_weaken\", \r\n      \"degree_weight\", \r\n      \"degree_weight_absolute\", \r\n      \"in_degree\", \r\n      \"in_degree_strengthen\", \r\n      \"in_degree_weaken\", \r\n      \"in_degree_weight\", \r\n      \"in_degree_weight_absolute\", \r\n      \"influence\", \r\n      \"out_degree\", \r\n      \"out_degree_strengthen\", \r\n      \"out_degree_weaken\", \r\n      \"out_degree_weight\", \r\n      \"out_degree_weight_absolute\"\r\n    ], \r\n    \"nodeColorOptions\": [\r\n      \"degree\", \r\n      \"degree_strengthen\", \r\n      \"degree_weaken\", \r\n      \"degree_weight\", \r\n      \"degree_weight_absolute\", \r\n      \"in_degree\", \r\n      \"in_degree_strengthen\", \r\n      \"in_degree_weaken\", \r\n      \"in_degree_weight\", \r\n      \"in_degree_weight_absolute\", \r\n      \"influence\", \r\n      \"out_degree\", \r\n      \"out_degree_strengthen\", \r\n      \"out_degree_weaken\", \r\n      \"out_degree_weight\", \r\n      \"out_degree_weight_absolute\"\r\n    ], \r\n    \"linkWidthOptions\": [\r\n      \"sign\", \r\n      \"strengthen\", \r\n      \"weaken\", \r\n      \"weight\", \r\n      \"weight_absolute\"\r\n    ], \r\n    \"linkColorOptions\": [\r\n      \"sign\", \r\n      \"strengthen\", \r\n      \"weaken\", \r\n      \"weight\", \r\n      \"weight_absolute\"\r\n    ]\r\n  }\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/api/graph/1/filters",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"graph",
+						"1",
+						"filters"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

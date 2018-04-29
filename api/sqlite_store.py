@@ -16,7 +16,7 @@ class sqlite_store(object):
 
         # Check if table already exists, create otherwise
         cursor = connection.cursor()
-        cursor.execute("CREATE TABLE IF NOT EXISTS graphs(name TEXT, timestamp INTEGER, json TEXT)")
+        cursor.execute("CREATE TABLE IF NOT EXISTS graphs(name TEXT, timestamp INTEGER, graph_json TEXT, filter_json TEXT)")
         connection.commit()
 
         self.connection = connection
@@ -35,7 +35,7 @@ class sqlite_store(object):
             name = fields['name']
 
         cursor = self.connection.cursor()
-        cursor.execute("INSERT INTO graphs VALUES (:name, :timestamp, :json)", {'name': name, 'timestamp': now_timestamp, 'json': sanatized_graph})
+        cursor.execute("INSERT INTO graphs (name, timestamp, graph_json) VALUES (:name, :timestamp, :graph_json)", {'name': name, 'timestamp': now_timestamp, 'graph_json': sanatized_graph})
         generated_id = cursor.lastrowid
 
         self.connection.commit()
@@ -61,7 +61,7 @@ class sqlite_store(object):
         graphs = []
 
         cursor = self.connection.cursor()
-        cursor.execute("SELECT rowid, name, json FROM graphs")
+        cursor.execute("SELECT rowid, name, graph_json FROM graphs")
         self.connection.commit()
         
         for identifier, name, graph_json in cursor.fetchall():
@@ -79,7 +79,7 @@ class sqlite_store(object):
 
     def get_graph(self, identifier):
         cursor = self.connection.cursor()
-        cursor.execute("SELECT rowid, name, json FROM graphs WHERE rowid=:id", {'id': identifier})
+        cursor.execute("SELECT rowid, name, graph_json FROM graphs WHERE rowid=:id", {'id': identifier})
         self.connection.commit()
         
         row = cursor.fetchone()
@@ -127,6 +127,56 @@ class sqlite_store(object):
         
         return True
 
+    def get_filters(self, graph_id):
+        cursor = self.connection.cursor()
+        cursor.execute("SELECT graph_json, filter_json FROM graphs WHERE rowid=:id", {'id': graph_id})
+        self.connection.commit()
+        
+        row = cursor.fetchone()
+        if row is None:
+            raise FileNotFoundError
+
+        graph_json, filter_json = row
+        jg = json_graph.json_graph(graph=graph_json, source='frontend')
+        jg.graph_to_json()
+
+        if filter_json is None:
+            filter = {'nodeSize': '', 'nodeColor': '', 'linkWidth': '', 'linkColor': ''}
+        else:
+            filter = json.loads(filter_json)
+
+        if not filter['nodeSize'] in jg.node_metrics_list:
+            filter['nodeSize'] = ''
+        if not filter['nodeColor'] in jg.node_metrics_list:
+            filter['nodeColor'] = ''
+        if not filter['linkWidth'] in jg.edge_metrics_list:
+            filter['linkWidth'] = ''
+        if not filter['linkColor'] in jg.edge_metrics_list:
+            filter['linkColor'] = ''
+
+        filter['nodeSizeOptions'] = jg.node_metrics_list
+        filter['nodeColorOptions'] = jg.node_metrics_list
+        filter['linkWidthOptions'] = jg.edge_metrics_list
+        filter['linkColorOptions'] = jg.edge_metrics_list
+
+        return {'filters': filter}
+
+    def save_filters(self, graph_id, filter):
+        set_filters = {}
+
+        set_filters['nodeSize'] = filter['filters']['nodeSize']
+        set_filters['nodeColor'] = filter['filters']['nodeColor']
+        set_filters['linkWidth'] = filter['filters']['linkWidth']
+        set_filters['linkColor'] = filter['filters']['linkColor']
+        
+        filter_json = json.dumps(set_filters, ensure_ascii=False)
+
+        cursor = self.connection.cursor()
+        cursor.execute("UPDATE graphs SET filter_json=:filter_json WHERE rowid=:id", {'filter_json': filter_json, 'id': graph_id})
+        self.connection.commit()
+
+        return self.get_filters(graph_id)
+
     def import_graph(self, graph_json='', timestamp=0, name=''):
         jg = json_graph.json_graph(graph=graph_json, source='importer')
         graph_dict = jg.graph_to_json(graph=None, metrics=False)
@@ -142,7 +192,7 @@ class sqlite_store(object):
             name = 'Created on {}'.format(formated_timestamp)
 
         cursor = self.connection.cursor()
-        cursor.execute("INSERT INTO graphs VALUES (:name, :timestamp, :json)", {'name': name, 'timestamp': now_timestamp, 'json': graph_json})
+        cursor.execute("INSERT INTO graphs (name, timestamp, graph_json) VALUES (:name, :timestamp, :graph_json)", {'name': name, 'timestamp': now_timestamp, 'graph_json': graph_json})
 
         self.connection.commit()
 

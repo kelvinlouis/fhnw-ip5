@@ -64,7 +64,42 @@ def recalculate_graph(graph_id):
             resp.status_code = 400
             return resp
     else:
-        return 
+        message = {
+            'status': 400,
+            'message': 'content not in application/json format',
+        }
+        resp = jsonify(message)
+        resp.status_code = 400
+        return resp
+
+@app.route('/api/graph/<int:graph_id>/filters', methods=['GET','PUT'])
+def handle_filters(graph_id):
+    if request.method == 'PUT':
+        if request.is_json:
+            content = request.get_json()
+            try:
+                return jsonify(store.save_filters(graph_id, filter=content))
+            except IndexError:
+                message = {
+                    'status': 400,
+                    'message': 'id in body does not match id in resource path',
+                }
+                resp = jsonify(message)
+                resp.status_code = 400
+                return resp
+        else:
+            message = {
+                'status': 400,
+                'message': 'content not in application/json format',
+            }
+            resp = jsonify(message)
+            resp.status_code = 400
+            return resp
+    elif request.method == 'GET':
+        try:
+            return jsonify(store.get_filters(graph_id))
+        except FileNotFoundError:
+            return not_found()
 
 @app.route('/api/graph/', methods=['GET', 'POST'])
 def show_graphs():

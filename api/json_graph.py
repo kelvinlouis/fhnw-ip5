@@ -161,9 +161,10 @@ class json_graph(object):
         action_systems = nx.get_node_attributes(graph, name='actionSystem')
         influences = nx.get_node_attributes(graph, name='influence')
         
+        node_metrics = {'influence': None}
+
         # Get all possible directed graph metrics and add them to 'node_metrics' dict
         if metrics:
-            node_metrics = {}
             degree_metrics = self.rebuild_metric(graph, ['weight','weight_absolute','strengthen','weaken'])
             node_metrics.update(degree_metrics)
             # degree_centrality = self.generate_metric(graph, 'degree_centrality', nx.degree_centrality)
@@ -191,7 +192,7 @@ class json_graph(object):
             # betweenness_centrality_weighted = self.generate_metric(graph, 'betweenness_centrality', nx.betweenness_centrality, ['weight','weight_absolute','strengthen','weaken'])
             # node_metrics.update(betweenness_centrality_weighted)
 
-            node_metrics_list = sorted(list(node_metrics.keys()))
+            self.node_metrics_list = sorted(list(node_metrics.keys()))
         
             # Find cycles and build a 'cycle id' list
             # Nodes with the same 'cycle id' belong to the same cycle
@@ -214,7 +215,8 @@ class json_graph(object):
             if metrics:
                 attributes['cycles'] = cycles[identifier[i]]
                 for k, metric in enumerate(node_metrics):
-                    attributes[metric] = node_metrics[metric][identifier[i]]
+                    if not node_metrics[metric] is None:
+                        attributes[metric] = node_metrics[metric][identifier[i]]
             
             nodes.append(attributes)
 
@@ -223,10 +225,11 @@ class json_graph(object):
         strengthen = nx.get_edge_attributes(graph, name='strengthen')
         weaken = nx.get_edge_attributes(graph, name='weaken')
         sign = nx.get_edge_attributes(graph, name='sign')
+
+        edge_metrics = {'weight':None, 'weight_absolute': None, 'strengthen': None, 'weaken': None, 'sign': None}
         
         # Get all possible directed graph metrics and add them to 'edge_metrics' dict
         if metrics:
-            edge_metrics = {}
             # edge_betweenness_centrality = self.generate_metric(graph, 'edge_betweenness_centrality', nx.edge_betweenness_centrality)
             # edge_metrics.update(edge_betweenness_centrality)
             # edge_betweenness_centrality_weighted = self.generate_metric(graph, 'edge_betweenness_centrality', nx.edge_betweenness_centrality, weights=['weight','weight_absolute','strengthen','weaken'])
@@ -234,7 +237,7 @@ class json_graph(object):
             # edge_load_centrality = self.generate_metric(graph, 'edge_load_centrality', nx.edge_load_centrality)
             # edge_metrics.update(edge_load_centrality)
             
-            edge_metrics_list = sorted(list(edge_metrics.keys()))
+            self.edge_metrics_list = sorted(list(edge_metrics.keys()))
         
         # Fill 'links' dict
         for (from_node, to_node, weight) in graph.edges(data='weight'):
@@ -250,7 +253,8 @@ class json_graph(object):
 
             if metrics:
                 for k, metric in enumerate(edge_metrics):
-                    attributes[metric] = edge_metrics[metric][(from_node, to_node)]
+                    if not edge_metrics[metric] is None:
+                        attributes[metric] = edge_metrics[metric][(from_node, to_node)]
                     
             links.append(attributes)
         
