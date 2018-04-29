@@ -7,7 +7,7 @@ const mapStateToProps = state => ({
   links: state.nodeEditor.links,
   targets: state.nodeEditor.targets,
   open: state.nodeEditor.open,
-  selectedGraphId: state.nodeEditor.selectedGraphId
+  selectedGraphId: state.selectedGraphId
 });
 
 const mapDispatchToProps = dispatch => ({

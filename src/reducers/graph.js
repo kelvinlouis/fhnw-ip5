@@ -6,6 +6,7 @@ import {
   SET_NODE_COLOR_FILTER,
   SET_EDGE_WIDTH_FILTER,
   SET_EDGE_COLOR_FILTER,
+  CHANGE_NODE_EDGES,
 } from '../actions'
 import * as d3 from 'd3';
 import { min, max } from 'underscore';
@@ -43,9 +44,13 @@ function changeNodeSize(graph, attr) {
   const maxValue = max(nodes, n => n[attr])[attr];
   const rscale = d3.scaleLinear().domain([minValue, maxValue]).range([6, 30]);
 
-  nodes.map(n => {
-    n.size = rscale(n[attr])
-  });
+  return {
+    ...graph,
+    nodes: nodes.map(n => {
+      n.size = rscale(n[attr]);
+      return n;
+    }),
+  };
 }
 
 function changeNodeColor(graph, attr) {
@@ -55,9 +60,13 @@ function changeNodeColor(graph, attr) {
     .domain([-1, 0, 1])
     .range(['red', 'black', 'green']);
 
-  nodes.map(n => {
-    n.color = color(n[attr])
-  });
+  return {
+    ...graph,
+    nodes: nodes.map(n => {
+      n.color = color(n[attr]);
+      return n;
+    }),
+  };
 }
 
 function changeEdgeWidth(graph, attr) {
@@ -66,9 +75,13 @@ function changeEdgeWidth(graph, attr) {
   const maxValue = max(links, l => l[attr])[attr];
   const rscale = d3.scaleLinear().domain([minValue, maxValue]).range([1, 5]);
 
-  links.map(l => {
-    l.width = rscale(l[attr])
-  });
+  return {
+    ...graph,
+    links: links.map(l => {
+      l.width = rscale(l[attr]);
+      return l;
+    }),
+  };
 }
 
 function changeEdgeColor(graph, attr) {
@@ -78,13 +91,51 @@ function changeEdgeColor(graph, attr) {
     .domain([-1, 0, 1])
     .range(['red', 'black', 'green']);
 
-  links.map(l => {
-    l.color = color(l[attr])
+  return {
+    ...graph,
+    links: links.map(l => {
+      l.color = color(l[attr]);
+      return l;
+    }),
+  };
+}
+
+function changeEdges(graph, changedEdges) {
+  const { links } = graph;
+  const newLinks = [];
+
+  links.forEach((existingLink) => {
+    const changedLink = changedEdges.find(l =>
+      l.source === existingLink.source && l.target === existingLink.target);
+
+    if (!changedLink) {
+      // Existing link wasn't changed
+      newLinks.push(existingLink);
+    } else {
+      if (changedLink.changed) {
+        Object.assign(existingLink, {
+          weight: changedLink.weight,
+          absolute_weight: changedLink.absolute_weight,
+          strengthen: changedLink.strengthen,
+          weaken: changedLink.weaken,
+        });
+      }
+    }
   });
+
+  const newGraph = {
+    ...graph,
+    links: newLinks,
+  };
+
+  // @TODO: Filter must be applied to newly constructed graph
+
+  return newGraph;
 }
 
 export const graphs = (state = {}, action) => {
   let graph;
+  let newGraph;
 
   switch (action.type) {
     case ADD_GRAPH:
@@ -95,19 +146,28 @@ export const graphs = (state = {}, action) => {
       return state;
     case SET_NODE_SIZE_FILTER:
       graph = state[action.graphId];
-      changeNodeSize(graph, action.filter);
+      newGraph = changeNodeSize(graph, action.filter);
+      state[action.graphId] = newGraph;
       return state;
     case SET_NODE_COLOR_FILTER:
       graph = state[action.graphId];
-      changeNodeColor(graph, action.filter);
+      newGraph = changeNodeColor(graph, action.filter);
+      state[action.graphId] = newGraph;
       return state;
     case SET_EDGE_WIDTH_FILTER:
       graph = state[action.graphId];
-      changeEdgeWidth(graph, action.filter);
+      newGraph = changeEdgeWidth(graph, action.filter);
+      state[action.graphId] = newGraph;
       return state;
     case SET_EDGE_COLOR_FILTER:
       graph = state[action.graphId];
-      changeEdgeColor(graph, action.filter);
+      newGraph = changeEdgeColor(graph, action.filter);
+      state[action.graphId] = newGraph;
+      return state;
+    case CHANGE_NODE_EDGES:
+      graph = state[action.graphId];
+      newGraph = changeEdges(graph, action.edges);
+      state[action.graphId] = newGraph;
       return state;
     default:
       return state;

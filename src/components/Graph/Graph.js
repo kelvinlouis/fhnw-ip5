@@ -53,6 +53,30 @@ function transform(d) {
   return `translate(${d.x},${d.y})`;
 }
 
+function updateNodes(prevNodes, nextNodes) {
+  prevNodes.map((prev) => {
+    const next = nextNodes.find(next => next.id === prev.id);
+
+    return Object.assign(prev, next);
+  });
+}
+
+function updateLinks(prevLinks, nextLinks) {
+  prevLinks.forEach((prev, i, arr) => {
+    const next = nextLinks.find(next => next.source === prev.source.id && next.target === prev.target.id);
+
+    if (next) {
+      Object.assign(prev, {
+        ...next,
+        target: prev.target,
+        source: prev.source,
+      });
+    } else {
+      arr.splice(i, 1);
+    }
+  });
+}
+
 class Graph extends Component {
   static propTypes = {
     data: PropTypes.shape({
@@ -82,16 +106,56 @@ class Graph extends Component {
     };
 
     if (nextProps.data) {
-      if (nextProps.data.nodes) {
+      if (nextProps.data.nodes && prevState.nodes) {
+        // Update references
+        updateNodes(prevState.nodes, nextProps.data.nodes);
+      } else if (!prevState.nodes && nextProps.data.nodes) {
+        // Initial set
         state.nodes = nextProps.data.nodes.map(n => Object.assign({}, n));
       }
 
-      if (nextProps.data.links) {
+      if (nextProps.data.links && prevState.links) {
+        // Update references
+        updateLinks(prevState.links, nextProps.data.links);
+      } else if (!prevState.links && nextProps.data.links) {
+        // Initial set
         state.links = nextProps.data.links.map(l => Object.assign({}, l));
       }
     }
 
     return state;
+  }
+
+  /**
+   * Shouldn't rerender a graph that was rendered before.
+   * Already rendered graphs will be updated via the tick function.
+   *
+   * Rerender if no graph was selected yet, or a different graph was
+   * loaded.
+   * @param nextProps
+   * @param nextState
+   * @returns {boolean}
+   */
+  shouldComponentUpdate(nextProps, nextState) {
+    const { data } = this.props;
+
+    if (!data) {
+      // No graph rendered yet
+      return true;
+    }
+
+    if (nextProps.data) {
+      if (data.id !== nextProps.data.id) {
+        // Different graph was selected
+        return true;
+      }
+
+      if (nextProps.data.nodes || nextProps.data.links) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   componentDidUpdate() {

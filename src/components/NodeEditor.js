@@ -64,6 +64,7 @@ class NodeEditor extends React.Component {
       ...prevState,
     };
 
+    // Ensures no references in the store are manipulated
     if (nextProps.links) {
       state.links = nextProps.links.map(l => Object.assign({}, l));
     }
@@ -94,6 +95,12 @@ class NodeEditor extends React.Component {
     link.weight = newWeight;
     link.absolute_weight = Math.abs(newWeight);
     link.changed = true;
+
+    if (link.sign === 1) {
+      link.strengthen = Math.abs(newWeight);
+    } else {
+      link.weaken = Math.abs(newWeight);
+    }
 
     this.setState({
       links: this.state.links,

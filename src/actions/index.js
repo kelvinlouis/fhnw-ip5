@@ -32,6 +32,6 @@ export const setEdgeColorFilterList = list => setFilterList(SET_EDGE_COLOR_FILTE
 export const addGraph = (id, data) => ({ type: ADD_GRAPH, id, data });
 export const selectGraph = id => ({ type: SELECT_GRAPH, id });
 export const clearSelectedGraph = () => ({ type: CLEAR_SELECTED_GRAPH });
-export const selectNode = (node, links, targets) => ({ type: SELECT_NODE, node, links, targets  });
+export const selectNode = (node, links, targets) => ({ type: SELECT_NODE, node, links, targets });
 export const closeNodeEditor = () => ({ type: CLOSE_NODE_EDITOR });
-export const changeNodeEdges = (edges) => ({ type: CHANGE_NODE_EDGES, edges });
+export const changeNodeEdges = (graphId, edges) => ({ type: CHANGE_NODE_EDGES, edges, graphId, });

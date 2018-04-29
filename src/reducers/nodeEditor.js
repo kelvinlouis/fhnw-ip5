@@ -1,4 +1,8 @@
-import { CHANGE_NODE_EDGES, CLOSE_NODE_EDITOR, SELECT_NODE } from '../actions';
+import {
+  CHANGE_NODE_EDGES,
+  CLOSE_NODE_EDITOR,
+  SELECT_NODE
+} from '../actions';
 
 const initialState = {
   selectedNode: null,
