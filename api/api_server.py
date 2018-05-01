@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import codecs
 import sqlite_store
@@ -11,6 +12,7 @@ app.config.update(
     JSON_AS_ASCII=False,
     JSONIFY_PRETTYPRINT_REGULAR=False
 )
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 store = sqlite_store.sqlite_store()
 store.connect(app.config['DATABASE'])
@@ -36,7 +38,7 @@ def hello():
     return ""
 
 @app.route('/api/graph/<int:graph_id>', methods=['GET','DELETE'])
-def show_graph(graph_id):
+def handle_graph(graph_id):
     if request.method == 'GET':
         try:
             return jsonify(store.get_graph(graph_id))
