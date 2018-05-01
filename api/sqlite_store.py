@@ -145,12 +145,31 @@ class sqlite_store(object):
         else:
             filter = json.loads(filter_json)
 
-        node_size_metrics_list = jg.node_metrics_list.copy()
-        node_color_metrics_list = jg.node_metrics_list.copy()
+        node_size_metrics_list = [
+            "in_degree",
+            "in_degree_strengthen",
+            "in_degree_weaken",
+            "in_degree_weight",
+            "in_degree_weight_absolute",
+            "out_degree",
+            "out_degree_strengthen",
+            "out_degree_weaken",
+            "out_degree_weight",
+            "out_degree_weight_absolute"
+            ]
+        node_color_metrics_list = [
+            "influence",
+            ]
 
-        edge_width_metrics_list = jg.edge_metrics_list.copy()
-        if 'sign' in edge_width_metrics_list: edge_width_metrics_list.remove('sign')
-        edge_color_metrics_list = jg.edge_metrics_list.copy()
+        edge_width_metrics_list = [
+            "strengthen",
+            "weaken",
+            "weight",
+            "weight_absolute"
+            ]
+        edge_color_metrics_list = [
+            "sign",
+            ]
 
         if not filter['nodeSize'] in node_size_metrics_list:
             filter['nodeSize'] = ''
