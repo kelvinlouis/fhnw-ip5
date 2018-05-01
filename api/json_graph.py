@@ -61,8 +61,9 @@ class json_graph(object):
 
         graph = nx.MultiDiGraph()
 
-        for i, life_entry in enumerate(json_data['lifeEntries']):
-            graph.add_node(i, id=life_entry['id'], 
+        for _, life_entry in enumerate(json_data['lifeEntries']):
+            graph.add_node(life_entry['id'], 
+                        id=life_entry['id'], 
                         label=str(life_entry['title']), 
                         influence=int(life_entry['influence']),
                         actionSystemId=life_entry['actionSystemId'],
@@ -195,7 +196,7 @@ class json_graph(object):
                     cycles[node].append(i)
             
         # Fill 'nodes' dict
-        for i, (node_id, node_attributes) in enumerate(graph.nodes(data=True)):
+        for i, (_, node_attributes) in enumerate(graph.nodes(data=True)):
             attributes = {
                 'id': node_attributes['id'],
                 'label': node_attributes['label'],
@@ -280,7 +281,7 @@ class json_graph(object):
         for _, graph_attribute in enumerate(json_graph_object):
             if graph_attribute == 'nodes':
                 sanatized_graph_json[graph_attribute] = []
-                for j, node in enumerate(json_graph_object[graph_attribute]):
+                for _, node in enumerate(json_graph_object[graph_attribute]):
                     node_attributes = {
                         'id': node['id'],
                         'label': node['label'],
