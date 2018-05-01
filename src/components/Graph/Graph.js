@@ -5,6 +5,8 @@ import './Graph.css';
 import { GraphPropTypes } from '../propTypes';
 import { max, min } from 'underscore';
 
+const defaultColorScale = d3.scaleOrdinal(d3.schemeCategory20c);
+
 function positionLink(d) {
   let x1 = d.source.x;
   let y1 = d.source.y;
@@ -100,7 +102,7 @@ function applyNodeFilters(nodes, filters) {
 
   nodes.forEach((n) => {
     n.size = rscale(n[sizeAttr]) || 10;
-    n.color = color(n[colorAttr]) || color(1);
+    n.color = colorAttr ? color(n[colorAttr]) : defaultColorScale(0);
   });
 }
 
@@ -120,7 +122,7 @@ function applyLinkFilters(links, filters) {
 
   links.forEach((l) => {
     l.width = rscale(l[widthAttr]) || 1;
-    l.color = color(l[colorAttr]) || color(1);
+    l.color = colorAttr ? color(l[colorAttr]) : defaultColorScale(1);
   });
 }
 
@@ -212,6 +214,7 @@ class Graph extends Component {
       }
 
       if (nextProps.data.nodes || nextProps.data.links) {
+        this.tick && this.tick();
         return false;
       }
     }
@@ -268,6 +271,12 @@ class Graph extends Component {
       .attr('r', d => d.size)
       .attr('fill', d => d.color)
       .on('dblclick', (d) => this.onNodeDoubleClick(d))
+      .on('contextmenu', function (d, i) {
+        d3.event.preventDefault();
+        d.fx = null;
+        d.fy = null;
+        d3.select(this).classed('fixed', false);
+      })
       .call(d3.drag()
         .on('start', dragstarted)
         .on('drag', dragged)
@@ -285,14 +294,13 @@ class Graph extends Component {
 
     simulation
       .nodes(nodes)
-      .on('tick', ticked);
+      .on('tick', tick);
 
     simulation
       .force('link')
       .links(links);
 
-
-    function ticked() {
+    function tick() {
       link.attr('d', positionLink)
         .style('stroke', d => d.color)
         .style('stroke-width', d => `${d.width}px`);
@@ -308,6 +316,8 @@ class Graph extends Component {
       label.attr('transform', transform);
     }
 
+    this.tick = tick;
+
     function dragstarted(d) {
       if (!d3.event.active) simulation.alphaTarget(0.3).restart();
       d.fx = d.x;
@@ -321,8 +331,9 @@ class Graph extends Component {
 
     function dragended(d) {
       if (!d3.event.active) simulation.alphaTarget(0);
-      d.fx = null;
-      d.fy = null;
+      // d.fx = null;
+      // d.fy = null;
+      d3.select(this).classed('fixed', true);
     }
   }
 
