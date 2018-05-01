@@ -3,7 +3,7 @@
 import sqlite3
 import json
 import time
-import json_graph
+from json_graph import json_graph
 
 class sqlite_store(object):
 
@@ -25,7 +25,7 @@ class sqlite_store(object):
         self.connection.close()
 
     def insert_graph(self, graph_json=''):
-        _, sanatized_graph, fields = json_graph.json_graph.json_to_graph(graph_json=graph_json, raw=False)
+        _, sanatized_graph, fields = json_graph.json_to_graph(graph_json=graph_json)
         now_timestamp = int(time.time())
         formated_timestamp = time.strftime("%d.%m.%Y %H:%M:%S", time.gmtime())
 
@@ -49,9 +49,9 @@ class sqlite_store(object):
             if graph_json['id'] != id:
                 raise IndexError
 
-        graph, _, fields = json_graph.json_graph.json_to_graph(graph_json=graph_json, raw=False)
+        graph, _, fields = json_graph.json_to_graph(graph_json=graph_json)
 
-        jg = json_graph.json_graph(graph=graph)
+        jg = json_graph(graph=graph)
         json_object = fields
         json_object.update(jg.graph_to_json())
 
@@ -65,7 +65,7 @@ class sqlite_store(object):
         self.connection.commit()
         
         for identifier, name, graph_json in cursor.fetchall():
-            jg = json_graph.json_graph(graph=graph_json, source='frontend')
+            jg = json_graph(graph=graph_json, source='frontend')
             graph = {
                 'id': identifier,
                 'name': name
@@ -87,7 +87,7 @@ class sqlite_store(object):
             raise FileNotFoundError
 
         identifier, name, graph_json = row
-        jg = json_graph.json_graph(graph=graph_json, source='frontend')
+        jg = json_graph(graph=graph_json, source='frontend')
         graph = {
             'id': identifier,
             'name': name
@@ -137,7 +137,7 @@ class sqlite_store(object):
             raise FileNotFoundError
 
         graph_json, filter_json = row
-        jg = json_graph.json_graph(graph=graph_json, source='frontend')
+        jg = json_graph(graph=graph_json, source='frontend')
         jg.graph_to_json()
 
         if filter_json is None:
@@ -145,19 +145,26 @@ class sqlite_store(object):
         else:
             filter = json.loads(filter_json)
 
-        if not filter['nodeSize'] in jg.node_metrics_list:
+        node_size_metrics_list = jg.node_metrics_list.copy()
+        node_color_metrics_list = jg.node_metrics_list.copy()
+
+        edge_width_metrics_list = jg.edge_metrics_list.copy()
+        if 'sign' in edge_width_metrics_list: edge_width_metrics_list.remove('sign')
+        edge_color_metrics_list = jg.edge_metrics_list.copy()
+
+        if not filter['nodeSize'] in node_size_metrics_list:
             filter['nodeSize'] = ''
-        if not filter['nodeColor'] in jg.node_metrics_list:
+        if not filter['nodeColor'] in node_color_metrics_list:
             filter['nodeColor'] = ''
-        if not filter['linkWidth'] in jg.edge_metrics_list:
+        if not filter['linkWidth'] in edge_width_metrics_list:
             filter['linkWidth'] = ''
-        if not filter['linkColor'] in jg.edge_metrics_list:
+        if not filter['linkColor'] in edge_color_metrics_list:
             filter['linkColor'] = ''
 
-        filter['nodeSizeOptions'] = jg.node_metrics_list
-        filter['nodeColorOptions'] = jg.node_metrics_list
-        filter['linkWidthOptions'] = jg.edge_metrics_list
-        filter['linkColorOptions'] = jg.edge_metrics_list
+        filter['nodeSizeOptions'] = node_size_metrics_list
+        filter['nodeColorOptions'] = node_color_metrics_list
+        filter['linkWidthOptions'] = edge_width_metrics_list
+        filter['linkColorOptions'] = edge_color_metrics_list
 
         return {'filters': filter}
 
@@ -178,7 +185,7 @@ class sqlite_store(object):
         return self.get_filters(graph_id)
 
     def import_graph(self, graph_json='', timestamp=0, name=''):
-        jg = json_graph.json_graph(graph=graph_json, source='importer')
+        jg = json_graph(graph=graph_json, source='importer')
         graph_dict = jg.graph_to_json(graph=None, metrics=False)
 
         graph_json = json.JSONEncoder(ensure_ascii=False, allow_nan=False).encode(graph_dict)
