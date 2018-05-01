@@ -9,7 +9,7 @@ from collections import defaultdict
 class json_graph(object):
     def __init__(self, graph=None, source=''):
         if source == 'frontend':
-            self.graph, _, _ = json_graph.json_to_graph(graph_json=graph, raw=True)
+            self.graph, _, _ = json_graph.json_to_graph(graph_json=graph)
         elif source == 'importer':
             self.graph = json_graph.import_graph(graph)
         else:
@@ -20,7 +20,7 @@ class json_graph(object):
     def get_action_systems(data):
         entries = {}
         
-        for i, entry in enumerate(data):
+        for _, entry in enumerate(data):
             entries[entry['id']] = entry['name']
         
         return entries
@@ -45,6 +45,12 @@ class json_graph(object):
     # Loads the inital json and creates a networkx multidi graph
     @staticmethod
     def import_graph(graph_json):
+        """Generate a NetworkX graph from original JSON files.
+
+        Keyword arguments:
+        graph_json -- JSON encoded string in original structure
+        """
+        
         json_data = json.JSONDecoder().decode(graph_json)
         action_systems = {}
 
@@ -100,7 +106,7 @@ class json_graph(object):
             metric_data[metric_name] = metric_function(graph)
         else:
             # Metric is weighted, go though every weight attribute
-            for i, weight in enumerate(weights):
+            for _, weight in enumerate(weights):
                 metric_data['{}_{}'.format(metric_name, weight)] = metric_function(graph, weight=weight)
                 
         return metric_data
@@ -116,7 +122,7 @@ class json_graph(object):
         
         metric_data = {}
         temp_data = {}
-        for i, weight in enumerate(weights):
+        for _, weight in enumerate(weights):
             temp_data['degree_{}'.format(weight)] = graph.degree(weight=weight)
             temp_data['in_degree_{}'.format(weight)] = graph.in_degree(weight=weight)
             temp_data['out_degree_{}'.format(weight)] = graph.out_degree(weight=weight)
@@ -125,19 +131,20 @@ class json_graph(object):
         temp_data['in_degree'] = graph.in_degree()
         temp_data['out_degree'] = graph.out_degree()
         
-        for i, metric in enumerate(temp_data):
+        for _, metric in enumerate(temp_data):
             metric_data[metric] = {}
-            for j, (node_id, value) in enumerate(temp_data[metric]):
+            for _, (node_id, value) in enumerate(temp_data[metric]):
                 metric_data[metric][node_id] = value
         
         return metric_data
 
     def graph_to_json(self, graph=None, metrics=True):
-        """Generate a JSON formated string og the graph object with all possible
-        metrics provided by networkx
+        """Generate a JSON formated string of the graph object with all possible
+        and enabled metrics provided by networkx
 
         Keyword arguments:
         graph -- the graph for which metrics should be generated
+        metrics -- if metrics shound be included in output
         """
         
         if graph == None:
@@ -158,6 +165,7 @@ class json_graph(object):
         action_systems = nx.get_node_attributes(graph, name='actionSystem')
         influences = nx.get_node_attributes(graph, name='influence')
         
+        # Create node_metrics list
         node_metrics = {'influence': None}
 
         # Get all possible directed graph metrics and add them to 'node_metrics' dict
@@ -196,7 +204,7 @@ class json_graph(object):
             cycles_list = []
             for i, cycle in enumerate(list(nx.simple_cycles(graph))):
                 cycles_list.append(i)
-                for j, node in enumerate(cycle):
+                for _, node in enumerate(cycle):
                     cycles[node].append(i)
             
         # Fill 'nodes' dict
@@ -211,7 +219,7 @@ class json_graph(object):
 
             if metrics:
                 attributes['cycles'] = cycles[identifier[i]]
-                for k, metric in enumerate(node_metrics):
+                for _, metric in enumerate(node_metrics):
                     if not node_metrics[metric] is None:
                         attributes[metric] = node_metrics[metric][identifier[i]]
             
@@ -249,7 +257,7 @@ class json_graph(object):
             }
 
             if metrics:
-                for k, metric in enumerate(edge_metrics):
+                for _, metric in enumerate(edge_metrics):
                     if not edge_metrics[metric] is None:
                         attributes[metric] = edge_metrics[metric][(from_node, to_node)]
                     
@@ -265,8 +273,15 @@ class json_graph(object):
         return json_object
 
     @staticmethod
-    def json_to_graph(graph_json='', raw=True):
-        if raw:
+    def json_to_graph(graph_json=''):
+        """Generate a NetworkX graph, JSON encoded string of graph without metrics,
+        and a fields dictionary containing the metadata
+
+        Keyword arguments:
+        graph_json -- JSON encoded string/object of graph
+        """
+
+        if isinstance(graph_json, str):
             json_graph_object = json.JSONDecoder().decode(graph_json)
         else:
             json_graph_object = graph_json
@@ -276,12 +291,12 @@ class json_graph(object):
         sanatized_graph_json = {}
         fields = {}
 
-        if raw == False:
+        if not isinstance(graph_json, str):
             if 'id' in json_graph_object:
                 fields['id'] = json_graph_object['id']
             fields['name'] = json_graph_object['name']
         
-        for i, graph_attribute in enumerate(json_graph_object):
+        for _, graph_attribute in enumerate(json_graph_object):
             if graph_attribute == 'nodes':
                 sanatized_graph_json[graph_attribute] = []
                 for j, node in enumerate(json_graph_object[graph_attribute]):
