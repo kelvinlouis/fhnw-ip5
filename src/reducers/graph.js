@@ -2,7 +2,7 @@ import {
   ADD_GRAPH,
   SELECT_GRAPH,
   CLEAR_SELECTED_GRAPH,
-  CHANGE_NODE_EDGES,
+  CHANGE_NODE_LINKS,
 } from '../actions'
 
 function createGraph(origin) {
@@ -18,12 +18,12 @@ function createGraph(origin) {
   };
 }
 
-function changeEdges(graph, changedEdges) {
+function changeLinks(graph, changedLinks) {
   const { links } = graph;
   const newLinks = [];
 
   links.forEach((existingLink) => {
-    const changedLink = changedEdges.find(l =>
+    const changedLink = changedLinks.find(l =>
       l.source === existingLink.source && l.target === existingLink.target);
 
     if (!changedLink) {
@@ -58,9 +58,9 @@ export const graphs = (state = {}, action) => {
       graph = createGraph(action.data);
       state[action.id] = graph;
       return state;
-    case CHANGE_NODE_EDGES:
+    case CHANGE_NODE_LINKS:
       graph = state[action.graphId];
-      newGraph = changeEdges(graph, action.edges);
+      newGraph = changeLinks(graph, action.links);
       state[action.graphId] = newGraph;
       return state;
     default:

@@ -1,8 +1,8 @@
 import {
   SET_NODE_SIZE_FILTER,
   SET_NODE_COLOR_FILTER,
-  SET_EDGE_WIDTH_FILTER,
-  SET_EDGE_COLOR_FILTER,
+  SET_LINK_WIDTH_FILTER,
+  SET_LINK_COLOR_FILTER,
   CLEAR_SELECTED_GRAPH,
 } from '../actions'
 
@@ -28,9 +28,9 @@ export const nodeColorFilter = (state = '', action) => {
   }
 };
 
-export const edgeWidthFilter = (state = '', action) => {
+export const linkWidthFilter = (state = '', action) => {
   switch (action.type) {
-    case SET_EDGE_WIDTH_FILTER:
+    case SET_LINK_WIDTH_FILTER:
       return action.filter;
     case CLEAR_SELECTED_GRAPH:
       return '';
@@ -39,9 +39,9 @@ export const edgeWidthFilter = (state = '', action) => {
   }
 };
 
-export const edgeColorFilter = (state = '', action) => {
+export const linkColorFilter = (state = '', action) => {
   switch (action.type) {
-    case SET_EDGE_COLOR_FILTER:
+    case SET_LINK_COLOR_FILTER:
       return action.filter;
     case CLEAR_SELECTED_GRAPH:
       return '';

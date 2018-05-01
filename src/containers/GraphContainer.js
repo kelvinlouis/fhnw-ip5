@@ -8,8 +8,8 @@ const mapStateToProps = state => ({
   filters: {
     nodeSize: state.nodeSizeFilter,
     nodeColor: state.nodeColorFilter,
-    edgeWidth: state.edgeWidthFilter,
-    edgeColor: state.edgeColorFilter,
+    linkWidth: state.linkWidthFilter,
+    linkColor: state.linkColorFilter,
   },
 });
 

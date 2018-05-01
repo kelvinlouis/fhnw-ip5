@@ -1,5 +1,5 @@
 import {
-  CHANGE_NODE_EDGES,
+  CHANGE_NODE_LINKS,
   CLOSE_NODE_EDITOR,
   SELECT_NODE
 } from '../actions';
@@ -13,7 +13,7 @@ const initialState = {
 
 export const nodeEditor = (state = initialState, action) => {
   switch (action.type) {
-    case CHANGE_NODE_EDGES:
+    case CHANGE_NODE_LINKS:
     case CLOSE_NODE_EDITOR:
       return initialState;
     case SELECT_NODE:

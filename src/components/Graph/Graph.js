@@ -20,7 +20,7 @@ function positionLink(d) {
   const cosPhi = d.target.size * Math.cos(phi);
 
   // Set the position of the link's end point at the source node
-  // such that it is on the edge closest to the target node
+  // such that it is on the link closest to the target node
   if (d.target.y > d.source.y) {
     x1 = x1 + sinTheta;
     y1 = y1 + cosTheta;
@@ -31,7 +31,7 @@ function positionLink(d) {
   }
 
   // Set the position of the link's end point at the target node
-  // such that it is on the edge closest to the source node
+  // such that it is on the link closest to the source node
   if (d.source.x > d.target.x) {
     x2 = x2 + cosPhi;
     y2 = y2 + sinPhi;
@@ -105,8 +105,8 @@ function applyNodeFilters(nodes, filters) {
 }
 
 function applyLinkFilters(links, filters) {
-  const widthAttr = filters.edgeWidth;
-  const colorAttr = filters.edgeColor;
+  const widthAttr = filters.linkWidth;
+  const colorAttr = filters.linkColor;
 
   const minValue = min(links, l => l[widthAttr])[widthAttr];
   const maxValue = max(links, l => l[widthAttr])[widthAttr];
@@ -139,8 +139,8 @@ class Graph extends Component {
     filters: PropTypes.shape({
       nodeSize: PropTypes.string,
       nodeColor: PropTypes.string,
-      edgeWidth: PropTypes.string,
-      edgeColor: PropTypes.string,
+      linkWidth: PropTypes.string,
+      linkColor: PropTypes.string,
     }),
     onNodeDoubleClick: PropTypes.func,
   };

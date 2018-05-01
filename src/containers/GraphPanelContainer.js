@@ -2,8 +2,8 @@ import { connect } from 'react-redux';
 import {
   setNodeSizeFilter,
   setNodeColorFilter,
-  setEdgeWidthFilter,
-  setEdgeColorFilter, clearSelectedGraph,
+  setLinkWidthFilter,
+  setLinkColorFilter, clearSelectedGraph,
 } from '../actions';
 import GraphPanel from '../components/GraphPanel';
 import { getSelectedGraph } from '../reducers/graph';
@@ -12,14 +12,14 @@ const mapStateToProps = state => ({
   // A list of all filters Array<String>
   nodeSizeList: state.nodeSizeFilterList,
   nodeColorList: state.nodeColorFilterList,
-  edgeWidthList: state.edgeWidthFilterList,
-  edgeColorList: state.edgeColorFilterList,
+  linkWidthList: state.linkWidthFilterList,
+  linkColorList: state.linkColorFilterList,
 
   // Selected filter
   nodeSize: state.nodeSizeFilter,
   nodeColor: state.nodeColorFilter,
-  edgeWidth: state.edgeWidthFilter,
-  edgeColor: state.edgeColorFilter,
+  linkWidth: state.linkWidthFilter,
+  linkColor: state.linkColorFilter,
 
   // Selected graph
   selectedGraph: getSelectedGraph(state),
@@ -28,8 +28,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onNodeSizeChange: (value, graphId) => dispatch(setNodeSizeFilter(value, graphId)),
   onNodeColorChange: (value, graphId) => dispatch(setNodeColorFilter(value, graphId)),
-  onEdgeWidthChange: (value, graphId) => dispatch(setEdgeWidthFilter(value, graphId)),
-  onEdgeColorChange: (value, graphId) => dispatch(setEdgeColorFilter(value, graphId)),
+  onLinkWidthChange: (value, graphId) => dispatch(setLinkWidthFilter(value, graphId)),
+  onLinkColorChange: (value, graphId) => dispatch(setLinkColorFilter(value, graphId)),
   onLoad: () => dispatch(clearSelectedGraph()),
 });
 

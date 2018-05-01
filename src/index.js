@@ -10,8 +10,8 @@ import registerServiceWorker from './registerServiceWorker';
 import {
   setNodeSizeFilterList,
   setNodeColorFilterList,
-  setEdgeWidthFilterList,
-  setEdgeColorFilterList,
+  setLinkWidthFilterList,
+  setLinkColorFilterList,
 } from './actions';
 
 const store = createStore(rootReducer);
@@ -39,14 +39,14 @@ store.dispatch(setNodeColorFilterList([
   'actionSystem',
 ]));
 
-store.dispatch(setEdgeWidthFilterList([
+store.dispatch(setLinkWidthFilterList([
   'weight',
   'weight_absolute',
   'strengthen',
   'weaken',
 ]));
 
-store.dispatch(setEdgeColorFilterList(['sign']));
+store.dispatch(setLinkColorFilterList(['sign']));
 
 ReactDOM.render(
   <Provider store={store}>

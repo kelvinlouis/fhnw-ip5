@@ -24,18 +24,18 @@ class GraphPanel extends Component {
   static propTypes = {
     nodeSizeList: PropTypes.arrayOf(PropTypes.string).isRequired,
     nodeColorList: PropTypes.arrayOf(PropTypes.string).isRequired,
-    edgeWidthList: PropTypes.arrayOf(PropTypes.string).isRequired,
-    edgeColorList: PropTypes.arrayOf(PropTypes.string).isRequired,
+    linkWidthList: PropTypes.arrayOf(PropTypes.string).isRequired,
+    linkColorList: PropTypes.arrayOf(PropTypes.string).isRequired,
 
     nodeSize: PropTypes.string.isRequired,
     nodeColor: PropTypes.string.isRequired,
-    edgeWidth: PropTypes.string.isRequired,
-    edgeColor: PropTypes.string.isRequired,
+    linkWidth: PropTypes.string.isRequired,
+    linkColor: PropTypes.string.isRequired,
 
     onNodeSizeChange: PropTypes.func.isRequired,
     onNodeColorChange: PropTypes.func.isRequired,
-    onEdgeWidthChange: PropTypes.func.isRequired,
-    onEdgeColorChange: PropTypes.func.isRequired,
+    onLinkWidthChange: PropTypes.func.isRequired,
+    onLinkColorChange: PropTypes.func.isRequired,
 
     onLoad: PropTypes.func.isRequired,
 
@@ -95,18 +95,18 @@ class GraphPanel extends Component {
       classes,
       nodeSizeList,
       nodeColorList,
-      edgeWidthList,
-      edgeColorList,
+      linkWidthList,
+      linkColorList,
 
       nodeSize,
       nodeColor,
-      edgeWidth,
-      edgeColor,
+      linkWidth,
+      linkColor,
 
       onNodeSizeChange,
       onNodeColorChange,
-      onEdgeWidthChange,
-      onEdgeColorChange,
+      onLinkWidthChange,
+      onLinkColorChange,
 
       selectedGraph,
     } = this.props;
@@ -143,18 +143,18 @@ class GraphPanel extends Component {
           </ExpansionPanelSummary>
           <ExpansionPanelDetails className={classes.controlContainer}>
             <FilterSelect
-              id="edgeWidth"
+              id="linkWidth"
               label="Stärke"
-              list={edgeWidthList}
-              value={edgeWidth}
-              onChange={(value) => onEdgeWidthChange(value, selectedGraph.id)}
+              list={linkWidthList}
+              value={linkWidth}
+              onChange={(value) => onLinkWidthChange(value, selectedGraph.id)}
             />
             <FilterSelect
-              id="edgeColor"
+              id="linkColor"
               label="Farbe"
-              list={edgeColorList}
-              value={edgeColor}
-              onChange={(value) => onEdgeColorChange(value, selectedGraph.id)}
+              list={linkColorList}
+              value={linkColor}
+              onChange={(value) => onLinkColorChange(value, selectedGraph.id)}
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>

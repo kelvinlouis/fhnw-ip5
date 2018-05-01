@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import NodeEditor from '../components/NodeEditor';
-import { changeNodeEdges, closeNodeEditor } from '../actions';
+import { changeNodeLinks, closeNodeEditor } from '../actions';
 
 const mapStateToProps = state => ({
   node: state.nodeEditor.node,
@@ -11,7 +11,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSave: (graphId, edges) => dispatch(changeNodeEdges(graphId, edges)),
+  onSave: (graphId, links) => dispatch(changeNodeLinks(graphId, links)),
   onClose: () => dispatch(closeNodeEditor()),
 });
 
