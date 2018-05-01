@@ -8,7 +8,8 @@ app = Flask(__name__)
 app.config.update(
     DATABASE='graphdb.sqlite3',
     JSON_SORT_KEYS=False,
-    JSON_AS_ASCII=False
+    JSON_AS_ASCII=False,
+    JSONIFY_PRETTYPRINT_REGULAR=False
 )
 
 store = sqlite_store.sqlite_store()
@@ -32,7 +33,7 @@ for file in files:
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return ""
 
 @app.route('/api/graph/<int:graph_id>', methods=['GET','DELETE'])
 def show_graph(graph_id):

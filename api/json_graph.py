@@ -2,12 +2,9 @@
 
 import codecs
 import json
-import pandas as pd
 import numpy as np
 import networkx as nx
 from collections import defaultdict
-
-from pprint import pprint
 
 class json_graph(object):
     def __init__(self, graph=None, source=''):
