@@ -40,7 +40,7 @@ class GraphPanel extends Component {
     onLoad: PropTypes.func.isRequired,
 
     selectedGraph: PropTypes.shape({
-      id: PropTypes.string,
+      id: PropTypes.number,
       name: PropTypes.string,
     }),
   };
@@ -73,16 +73,22 @@ class GraphPanel extends Component {
   };
 
   save = event => {
-    // fetch(`${process.env.BACKEND_URL}/graph`, {
-    //   // body: JSON.stringify(data), // must match 'Content-Type' header
-    //   cache: 'no-cache',
-    //   credentials: 'same-origin',
-    //   headers: {
-    //     'content-type': 'application/json'
-    //   },
-    //   method: 'POST',
-    //   mode: 'cors',
-    // })
+    const { onSave, selectedGraph, nodeSize, nodeColor, linkWidth, linkColor } = this.props;
+    const { name } = this.state;
+    const newGraph = {
+      ...selectedGraph,
+      name,
+    };
+
+    // Remove ID
+    delete newGraph.id;
+
+    onSave(newGraph, {
+      nodeSize,
+      nodeColor,
+      linkWidth,
+      linkColor,
+    });
   };
 
   load = event => {

@@ -4,24 +4,23 @@ import { connect } from 'react-redux';
 import CssBaseline from 'material-ui/CssBaseline';
 import Grid from 'material-ui/Grid';
 import './App.css';
-import { addGraph, selectGraph } from './actions';
+import {
+  addGraph,
+  selectGraph,
+  setLinkColorFilterList,
+  setLinkWidthFilterList,
+  setNodeColorFilterList,
+  setNodeSizeFilterList,
+  setNodeSizeFilter,
+  setNodeColorFilter,
+  setLinkColorFilter,
+  setLinkWidthFilter,
+} from './actions';
 import GraphLoader from './components/GraphLoader/GraphLoader';
 import GraphContainer from './containers/GraphContainer';
 import GraphPanelContainer from './containers/GraphPanelContainer';
 import NodeEditorContainer from './containers/NodeEditorContainer';
-import {getGraph} from './ApiService';
-
-/**
- * Path where all the graphs are exported by Jupyter
- * @type {string}
- */
-const GRAPH_DATA_PATH = `${process.env.PUBLIC_URL}/graph_data`;
-
-/**
- * Local Storage key where currently selected graph is stored
- * @type {string}
- */
-const LOCAL_STORAGE_SELECTED_GRAPH = 'selectedGraphId';
+import { getGraph, getGraphFilters } from './ApiService';
 
 const mapStateToProps = state => ({
   selectedGraphId: state.selectedGraphId,
@@ -33,28 +32,40 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    // Look for previous selected graph, by checking local storage
-    const id = localStorage.getItem(LOCAL_STORAGE_SELECTED_GRAPH);
+    const { selectedGraphId } = this.props;
 
-    if (id) {
-      await this.getGraphData(id);
-      this.selectGraph(id);
+    if (selectedGraphId) {
+      await this.getGraphData(selectedGraphId);
+      await this.getGraphFilters(selectedGraphId);
     }
   }
 
-  constructor(props) {
-    super(props);
-  }
-
   onSelected = async (id) => {
-    localStorage.setItem(LOCAL_STORAGE_SELECTED_GRAPH, id);
     await this.getGraphData(id);
+    await this.getGraphFilters(id);
     this.selectGraph(id);
   };
 
   selectGraph(id) {
     const { dispatch } = this.props;
     dispatch(selectGraph(id));
+  }
+
+  async getGraphFilters(id) {
+    const { dispatch } = this.props;
+    const filters = await getGraphFilters(id);
+
+    if (filters) {
+      dispatch(setNodeSizeFilterList(filters.nodeSizeOptions));
+      dispatch(setNodeColorFilterList(filters.nodeColorOptions));
+      dispatch(setLinkWidthFilterList(filters.linkWidthOptions));
+      dispatch(setLinkColorFilterList(filters.linkColorOptions));
+
+      dispatch(setNodeSizeFilter(filters.nodeSize));
+      dispatch(setNodeColorFilter(filters.nodeColor));
+      dispatch(setLinkWidthFilter(filters.linkWidth));
+      dispatch(setLinkColorFilter(filters.linkColor));
+    }
   }
 
   /**

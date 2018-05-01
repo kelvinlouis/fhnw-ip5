@@ -3,10 +3,11 @@ import {
   setNodeSizeFilter,
   setNodeColorFilter,
   setLinkWidthFilter,
-  setLinkColorFilter, clearSelectedGraph,
+  setLinkColorFilter, clearSelectedGraph, addGraph, selectGraph,
 } from '../actions';
 import GraphPanel from '../components/GraphPanel';
 import { getSelectedGraph } from '../reducers/graph';
+import { createGraph, saveGraphFilters } from '../ApiService';
 
 const mapStateToProps = state => ({
   // A list of all filters Array<String>
@@ -31,6 +32,12 @@ const mapDispatchToProps = dispatch => ({
   onLinkWidthChange: (value, graphId) => dispatch(setLinkWidthFilter(value, graphId)),
   onLinkColorChange: (value, graphId) => dispatch(setLinkColorFilter(value, graphId)),
   onLoad: () => dispatch(clearSelectedGraph()),
+  onSave: async (graph, filters) => {
+    const newGraph = await createGraph(graph);
+    await saveGraphFilters(newGraph.id, filters);
+    dispatch(addGraph(newGraph.id, newGraph));
+    dispatch(selectGraph(newGraph.id));
+  },
 });
 
 const GraphPanelContainer = connect(

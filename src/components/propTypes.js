@@ -22,3 +22,10 @@ export const LinkPropTypes = PropTypes.shape({
   width: PropTypes.number,
   color: PropTypes.string,
 });
+
+export const GraphPropTypes = PropTypes.shape({
+  id: PropTypes.number,
+  name: PropTypes.string,
+  nodes: PropTypes.arrayOf(NodePropTypes),
+  links: PropTypes.arrayOf(LinkPropTypes),
+});

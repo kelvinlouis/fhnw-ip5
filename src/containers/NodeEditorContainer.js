@@ -1,17 +1,20 @@
 import { connect } from 'react-redux';
 import NodeEditor from '../components/NodeEditor';
-import { changeNodeLinks, closeNodeEditor } from '../actions';
+import { updateGraph, closeNodeEditor } from '../actions';
+import { createGraphSnapshot } from '../ApiService';
 
 const mapStateToProps = state => ({
   node: state.nodeEditor.node,
-  links: state.nodeEditor.links,
-  targets: state.nodeEditor.targets,
+  graph: state.nodeEditor.graph,
   open: state.nodeEditor.open,
-  selectedGraphId: state.selectedGraphId
 });
 
 const mapDispatchToProps = dispatch => ({
-  onSave: (graphId, links) => dispatch(changeNodeLinks(graphId, links)),
+  onSave: async (graph) => {
+    const snapshot = await createGraphSnapshot(graph.id, graph);
+    dispatch(updateGraph(snapshot.id, snapshot));
+    dispatch(closeNodeEditor());
+  },
   onClose: () => dispatch(closeNodeEditor()),
 });
 

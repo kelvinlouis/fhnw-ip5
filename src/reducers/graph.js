@@ -2,8 +2,9 @@ import {
   ADD_GRAPH,
   SELECT_GRAPH,
   CLEAR_SELECTED_GRAPH,
-  CHANGE_NODE_LINKS,
+  UPDATE_GRAPH,
 } from '../actions'
+import { LOCAL_STORAGE_SELECTED_GRAPH } from '../constants';
 
 function createGraph(origin) {
   // Copy nodes
@@ -18,35 +19,6 @@ function createGraph(origin) {
   };
 }
 
-function changeLinks(graph, changedLinks) {
-  const { links } = graph;
-  const newLinks = [];
-
-  links.forEach((existingLink) => {
-    const changedLink = changedLinks.find(l =>
-      l.source === existingLink.source && l.target === existingLink.target);
-
-    if (!changedLink) {
-      // Existing link wasn't changed
-      newLinks.push(existingLink);
-    } else {
-      if (changedLink.changed) {
-        Object.assign(existingLink, {
-          weight: changedLink.weight,
-          absolute_weight: changedLink.absolute_weight,
-          strengthen: changedLink.strengthen,
-          weaken: changedLink.weaken,
-        });
-      }
-    }
-  });
-
-  return {
-    ...graph,
-    links: newLinks,
-  };
-}
-
 export const graphs = (state = {}, action) => {
   let graph;
   let newGraph;
@@ -58,9 +30,8 @@ export const graphs = (state = {}, action) => {
       graph = createGraph(action.data);
       state[action.id] = graph;
       return state;
-    case CHANGE_NODE_LINKS:
-      graph = state[action.graphId];
-      newGraph = changeLinks(graph, action.links);
+    case UPDATE_GRAPH:
+      newGraph = createGraph(action.graph);
       state[action.graphId] = newGraph;
       return state;
     default:
@@ -71,11 +42,16 @@ export const graphs = (state = {}, action) => {
 export const selectedGraphId = (state = null, action) => {
   switch (action.type) {
     case SELECT_GRAPH:
+      // Save latest selected graph into local storage
+      localStorage.setItem(LOCAL_STORAGE_SELECTED_GRAPH, action.id);
       state = action.id;
       return state;
     case CLEAR_SELECTED_GRAPH:
       return null;
     default:
+      const storedId = localStorage.getItem(LOCAL_STORAGE_SELECTED_GRAPH);
+      if (storedId) return storedId;
+
       return state;
   }
 };

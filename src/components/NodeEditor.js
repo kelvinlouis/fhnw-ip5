@@ -12,7 +12,7 @@ import Dialog, {
 } from 'material-ui/Dialog';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { LinkPropTypes, NodePropTypes } from './propTypes';
+import { GraphPropTypes, NodePropTypes } from './propTypes';
 
 const styles = {
   dialog: {
@@ -30,13 +30,40 @@ const styles = {
   notRemoved: {},
 };
 
+function changeLinks(graph, changedLinks) {
+  const { links } = graph;
+  const newLinks = [];
+
+  links.forEach((existingLink) => {
+    const changedLink = changedLinks.find(l =>
+      l.source === existingLink.source && l.target === existingLink.target);
+
+    if (!changedLink) {
+      // Existing link wasn't changed
+      newLinks.push(existingLink);
+    } else {
+      if (changedLink.changed) {
+        Object.assign(existingLink, {
+          weight: changedLink.weight,
+          absolute_weight: changedLink.absolute_weight,
+          strengthen: changedLink.strengthen,
+          weaken: changedLink.weaken,
+        });
+      }
+    }
+  });
+
+  return {
+    ...graph,
+    links: newLinks,
+  };
+}
+
 class NodeEditor extends React.Component {
   static propTypes = {
     node: NodePropTypes,
-    links: PropTypes.arrayOf(LinkPropTypes),
-    targets: PropTypes.arrayOf(NodePropTypes),
+    graph: GraphPropTypes,
     open: PropTypes.bool,
-    selectedGraphId: PropTypes.string,
 
     onClose: PropTypes.func,
     onSave: PropTypes.func,
@@ -44,8 +71,7 @@ class NodeEditor extends React.Component {
 
   static defaultProps = {
     node: null,
-    targets: null,
-    links: null,
+    graph: null,
     open: false,
     onClose: () => {},
     onSave: () => {},
@@ -56,6 +82,7 @@ class NodeEditor extends React.Component {
 
     this.state = {
       links: null,
+      targets: null,
     };
   }
 
@@ -65,8 +92,15 @@ class NodeEditor extends React.Component {
     };
 
     // Ensures no references in the store are manipulated
-    if (nextProps.links) {
-      state.links = nextProps.links.map(l => Object.assign({}, l));
+    if (nextProps.graph && nextProps.node) {
+      const { node, graph: { links, nodes } } = nextProps;
+
+      // Looks for outgoing links and targets of the node
+      const outgoingLinks = links.filter(l => l.source === node.id);
+      state.links = outgoingLinks;
+      state.targets = outgoingLinks.map(l => {
+        return nodes.find(n => n.id === l.target);
+      });
     }
 
     return state;
@@ -81,9 +115,15 @@ class NodeEditor extends React.Component {
    * Only save links that were indeed modified (changed/removed).
    */
   save = () => {
-    const { selectedGraphId, onSave } = this.props;
+    const { graph, onSave, onClose } = this.props;
     const { links } = this.state;
-    onSave(selectedGraphId, links.filter(l => l.changed || l.removed));
+    const changedLinks = links.filter(l => l.changed || l.removed);
+
+    if (changedLinks.length) {
+      onSave(changeLinks(graph, changedLinks));
+    } else {
+      onClose();
+    }
   };
 
   /**
@@ -115,8 +155,8 @@ class NodeEditor extends React.Component {
   }
 
   render() {
-    const { classes, open, node, targets } = this.props;
-    const { links } = this.state;
+    const { classes, open, node } = this.props;
+    const { links, targets } = this.state;
     if (!open || !node || !links) return <div />;
 
     function getTargetLabel(id) {

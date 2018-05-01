@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import './Graph.css';
-import { LinkPropTypes, NodePropTypes } from '../propTypes';
-import {max, min} from 'underscore';
+import { GraphPropTypes } from '../propTypes';
+import { max, min } from 'underscore';
 
 function positionLink(d) {
   let x1 = d.source.x;
@@ -131,11 +131,7 @@ function applyFilters(filters, nodes, links) {
 
 class Graph extends Component {
   static propTypes = {
-    data: PropTypes.shape({
-      id: PropTypes.string,
-      nodes: PropTypes.arrayOf(NodePropTypes),
-      links: PropTypes.arrayOf(LinkPropTypes),
-    }),
+    data: GraphPropTypes,
     filters: PropTypes.shape({
       nodeSize: PropTypes.string,
       nodeColor: PropTypes.string,
@@ -331,14 +327,15 @@ class Graph extends Component {
   }
 
   onNodeDoubleClick(clickedNode) {
-    const { data: { links, nodes }, onNodeDoubleClick } = this.props;
+    const { data: { id, name, links, nodes }, onNodeDoubleClick } = this.props;
     const node = nodes.find(n => n.id === clickedNode.id);
-    const nodeLinks = links.filter(l => l.source === node.id);
-    const targets = nodeLinks.map(l => {
-      return nodes.find(n => n.id === l.target);
-    });
 
-    onNodeDoubleClick(node, nodeLinks, targets);
+    onNodeDoubleClick(node, {
+      id,
+      name,
+      links,
+      nodes,
+    });
   }
 
   render() {

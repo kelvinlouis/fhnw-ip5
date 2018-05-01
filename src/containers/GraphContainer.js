@@ -14,7 +14,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onNodeDoubleClick: (node, links, targets) => dispatch(selectNode(node, links, targets)),
+  onNodeDoubleClick: (node, graph) => dispatch(selectNode(node, graph)),
 });
 
 const GraphContainer = connect(
