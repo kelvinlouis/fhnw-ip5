@@ -77,12 +77,19 @@ class NodeEditor extends React.Component {
     onClose();
   };
 
+  /**
+   * Only save links that were indeed modified (changed/removed).
+   */
   save = () => {
     const { selectedGraphId, onSave } = this.props;
     const { links } = this.state;
-    onSave(selectedGraphId, links);
+    onSave(selectedGraphId, links.filter(l => l.changed || l.removed));
   };
 
+  /**
+   * Update the state (forces re-render)
+   * @param link
+   */
   markAsRemoved(link) {
     link.removed = !link.removed;
 
@@ -92,8 +99,8 @@ class NodeEditor extends React.Component {
   }
 
   changeWeight(newWeight, link) {
-    link.weight = newWeight;
-    link.absolute_weight = Math.abs(newWeight);
+    link.weight = +newWeight;
+    link.weight_absolute = Math.abs(newWeight);
     link.changed = true;
 
     if (link.sign === 1) {

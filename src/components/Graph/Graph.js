@@ -62,7 +62,10 @@ function updateNodes(prevNodes, nextNodes) {
 }
 
 function updateLinks(prevLinks, nextLinks) {
-  prevLinks.forEach((prev, i, arr) => {
+  let len = prevLinks.length;
+
+  for (let i = 0; i<len; i++) {
+    const prev = prevLinks[i];
     const next = nextLinks.find(next => next.source === prev.source.id && next.target === prev.target.id);
 
     if (next) {
@@ -72,9 +75,12 @@ function updateLinks(prevLinks, nextLinks) {
         source: prev.source,
       });
     } else {
-      arr.splice(i, 1);
+      // Remove link from the list
+      prevLinks.splice(i, 1);
+      i--;
+      len--;
     }
-  });
+  }
 }
 
 class Graph extends Component {
@@ -95,6 +101,7 @@ class Graph extends Component {
     super(props);
 
     this.state = {
+      id: null,
       nodes: null,
       links: null,
     };
@@ -106,20 +113,22 @@ class Graph extends Component {
     };
 
     if (nextProps.data) {
+      if (prevState.id !== nextProps.data.id) {
+        // Complete new graph has to be set
+        state.id = nextProps.data.id;
+        state.nodes = nextProps.data.nodes.map(n => Object.assign({}, n));
+        state.links = nextProps.data.links.map(l => Object.assign({}, l));
+        return state;
+      }
+
       if (nextProps.data.nodes && prevState.nodes) {
         // Update references
         updateNodes(prevState.nodes, nextProps.data.nodes);
-      } else if (!prevState.nodes && nextProps.data.nodes) {
-        // Initial set
-        state.nodes = nextProps.data.nodes.map(n => Object.assign({}, n));
       }
 
       if (nextProps.data.links && prevState.links) {
         // Update references
         updateLinks(prevState.links, nextProps.data.links);
-      } else if (!prevState.links && nextProps.data.links) {
-        // Initial set
-        state.links = nextProps.data.links.map(l => Object.assign({}, l));
       }
     }
 
@@ -164,6 +173,10 @@ class Graph extends Component {
     if (!nodes || !links) return;
 
     const svg = d3.select('svg');
+
+    // Make sure svg is cleared
+    svg.selectAll("*").remove();
+
     const width = +svg.attr('width');
     const height = +svg.attr('height');
     const simulation = d3.forceSimulation()
@@ -202,7 +215,7 @@ class Graph extends Component {
       .attr('class', 'node')
       .attr('r', d => d.size)
       .attr('fill', d => d.color)
-      .on("dblclick", (d) => this.onNodeDoubleClick(d))
+      .on('dblclick', (d) => this.onNodeDoubleClick(d))
       .call(d3.drag()
         .on('start', dragstarted)
         .on('drag', dragged)
@@ -226,10 +239,15 @@ class Graph extends Component {
       .force('link')
       .links(links);
 
+
     function ticked() {
       link.attr('d', positionLink)
         .style('stroke', d => d.color)
         .style('stroke-width', d => `${d.width}px`);
+
+      // Make sure links are removed if the list
+      // links has changed
+      link.data(links).exit().remove();
 
       node.attr('transform', transform)
         .attr('r', d => d.size)

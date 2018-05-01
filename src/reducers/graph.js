@@ -113,12 +113,14 @@ function changeEdges(graph, changedEdges) {
       newLinks.push(existingLink);
     } else {
       if (changedLink.changed) {
-        Object.assign(existingLink, {
+        newLinks.push(Object.assign({
+          ...existingLink,
+        }, {
           weight: changedLink.weight,
-          absolute_weight: changedLink.absolute_weight,
+          weight_absolute: changedLink.weight_absolute,
           strengthen: changedLink.strengthen,
           weaken: changedLink.weaken,
-        });
+        }));
       }
     }
   });
