@@ -5,6 +5,7 @@ import Card, { CardActions, CardContent } from 'material-ui/Card';
 import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import GraphLoaderSelect from './GraphLoaderSelect';
+import { getGraphNameList } from '../../ApiService';
 
 const styles = {
   container: {
@@ -34,13 +35,6 @@ const styles = {
   },
 };
 
-const graphs = [
-  { value: 'kelvin-test.json', label: 'kelvin-test.json' },
-  { value: 'lukas-test.json', label: 'lukas-test.json' },
-  { value: 'melanie-test.json', label: 'melanie-test.json' },
-  { value: 'graph.json', label: 'graph.json' },
-];
-
 /**
  * Allows the user to select from a list of stored
  * graphs. Once selected, the graph will be loaded and displayed.
@@ -50,14 +44,24 @@ class GraphLoader extends Component {
     onSelected: PropTypes.func.isRequired,
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
-    // Stores the selected option from the
-    // list.
     this.state = {
       selected: null,
+      graphs: [],
     }
+  }
+
+  async componentDidMount() {
+    const list = await getGraphNameList();
+
+    this.setState({
+      graphs: list.map(g => ({
+        value: g.id,
+        label: g.name,
+      })),
+    });
   }
 
   /**
@@ -74,9 +78,8 @@ class GraphLoader extends Component {
   };
 
   render() {
-    const {
-      classes,
-    } = this.props;
+    const { classes } = this.props;
+    const { graphs } = this.state;
 
     return (
       <div className={classes.container}>

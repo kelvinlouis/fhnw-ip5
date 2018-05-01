@@ -9,6 +9,7 @@ import GraphLoader from './components/GraphLoader/GraphLoader';
 import GraphContainer from './containers/GraphContainer';
 import GraphPanelContainer from './containers/GraphPanelContainer';
 import NodeEditorContainer from './containers/NodeEditorContainer';
+import {getGraph} from './ApiService';
 
 /**
  * Path where all the graphs are exported by Jupyter
@@ -70,22 +71,10 @@ class App extends Component {
     }
 
     try {
-      const response = await fetch(`${GRAPH_DATA_PATH}/${id}`, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'Cache': 'no-cache',
-        },
-        credentials: 'include',
-      });
+      const graph = await getGraph(id);
 
-      if (response.ok) {
-        // Response was successful set data
-        const json = await response.json();
-
-        dispatch(addGraph(id, json));
-      } else {
-        console.error('Graph not found');
+      if (graph) {
+        dispatch(addGraph(id, graph));
       }
     } catch(err) {
       console.error(`Error occurred while fetching: ${err.message}`);
