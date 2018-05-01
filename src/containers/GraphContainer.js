@@ -5,6 +5,12 @@ import { selectNode } from '../actions';
 
 const mapStateToProps = state => ({
   data: getSelectedGraph(state),
+  filters: {
+    nodeSize: state.nodeSizeFilter,
+    nodeColor: state.nodeColorFilter,
+    edgeWidth: state.edgeWidthFilter,
+    edgeColor: state.edgeColorFilter,
+  },
 });
 
 const mapDispatchToProps = dispatch => ({

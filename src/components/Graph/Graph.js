@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import './Graph.css';
 import { LinkPropTypes, NodePropTypes } from '../propTypes';
+import {max, min} from 'underscore';
 
 function positionLink(d) {
   let x1 = d.source.x;
@@ -83,12 +84,63 @@ function updateLinks(prevLinks, nextLinks) {
   }
 }
 
+function applyNodeFilters(nodes, filters) {
+  const sizeAttr = filters.nodeSize;
+  const colorAttr = filters.nodeColor;
+
+  const minValue = min(nodes, n => n[sizeAttr])[sizeAttr];
+  const maxValue = max(nodes, n => n[sizeAttr])[sizeAttr];
+
+  const rscale = d3.scaleLinear()
+    .domain([minValue, maxValue])
+    .range([6, 30]);
+  const color = d3.scaleLinear()
+    .domain([-1, 0, 1])
+    .range(['red', 'black', 'green']);
+
+  nodes.forEach((n) => {
+    n.size = rscale(n[sizeAttr]) || 10;
+    n.color = color(n[colorAttr]) || color(1);
+  });
+}
+
+function applyLinkFilters(links, filters) {
+  const widthAttr = filters.edgeWidth;
+  const colorAttr = filters.edgeColor;
+
+  const minValue = min(links, l => l[widthAttr])[widthAttr];
+  const maxValue = max(links, l => l[widthAttr])[widthAttr];
+  const rscale = d3.scaleLinear()
+    .domain([minValue, maxValue])
+    .range([1, 5]);
+
+  const color = d3.scaleLinear()
+    .domain([-1, 0, 1])
+    .range(['red', 'black', 'green']);
+
+  links.forEach((l) => {
+    l.width = rscale(l[widthAttr]) || 1;
+    l.color = color(l[colorAttr]) || color(1);
+  });
+}
+
+function applyFilters(filters, nodes, links) {
+  applyNodeFilters(nodes, filters);
+  applyLinkFilters(links, filters);
+}
+
 class Graph extends Component {
   static propTypes = {
     data: PropTypes.shape({
       id: PropTypes.string,
       nodes: PropTypes.arrayOf(NodePropTypes),
       links: PropTypes.arrayOf(LinkPropTypes),
+    }),
+    filters: PropTypes.shape({
+      nodeSize: PropTypes.string,
+      nodeColor: PropTypes.string,
+      edgeWidth: PropTypes.string,
+      edgeColor: PropTypes.string,
     }),
     onNodeDoubleClick: PropTypes.func,
   };
@@ -118,6 +170,8 @@ class Graph extends Component {
         state.id = nextProps.data.id;
         state.nodes = nextProps.data.nodes.map(n => Object.assign({}, n));
         state.links = nextProps.data.links.map(l => Object.assign({}, l));
+
+        applyFilters(nextProps.filters, state.nodes, state.links);
         return state;
       }
 
@@ -130,6 +184,8 @@ class Graph extends Component {
         // Update references
         updateLinks(prevState.links, nextProps.data.links);
       }
+
+      applyFilters(nextProps.filters, prevState.nodes, prevState.links);
     }
 
     return state;
