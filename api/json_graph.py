@@ -2,7 +2,7 @@
 
 import codecs
 import json
-import numpy as np
+from math import copysign
 import networkx as nx
 from collections import defaultdict
 
@@ -69,7 +69,7 @@ class json_graph(object):
                     target = json_data['lifeEntries'][j]['id']
                     weight = int(edge_weight_map[connection_cell])
                     weight_absolute = int(abs(weight))
-                    sign = int(np.sign(weight))
+                    sign = int(copysign(1, weight))
                     strengthen = int(weight_absolute if sign == 1 else 0)
                     weaken = int(weight_absolute if sign == -1 else 0)
                     
