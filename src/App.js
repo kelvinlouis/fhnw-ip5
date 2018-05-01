@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import CssBaseline from 'material-ui/CssBaseline';
-import Grid from 'material-ui/Grid';
 import './App.css';
 import {
   addGraph,
@@ -104,14 +103,8 @@ class App extends Component {
     return (
       <div className="App">
         <CssBaseline />
-        <Grid container spacing={16}>
-          <Grid item xs={9}>
-            <GraphContainer />
-          </Grid>
-          <Grid item xs={3}>
-            <GraphPanelContainer />
-          </Grid>
-        </Grid>
+        <GraphContainer />
+        <GraphPanelContainer />
         {!selectedGraphId && <GraphLoader onSelected={this.onSelected} />}
         <NodeEditorContainer />
       </div>

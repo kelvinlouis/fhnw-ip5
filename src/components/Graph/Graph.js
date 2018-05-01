@@ -234,6 +234,7 @@ class Graph extends Component {
 
     const width = +svg.attr('width');
     const height = +svg.attr('height');
+
     const simulation = d3.forceSimulation()
       .force('link', d3.forceLink().id(d => d.id).distance(200)/*.distance(d => radius(d.source.r / 2) + radius(d.target.r / 2))*/)
       .force('charge', d3.forceManyBody())
@@ -300,6 +301,9 @@ class Graph extends Component {
       .force('link')
       .links(links);
 
+    resize();
+    d3.select(window).on('resize', resize);
+
     function tick() {
       link.attr('d', positionLink)
         .style('stroke', d => d.color)
@@ -334,6 +338,14 @@ class Graph extends Component {
       // d.fx = null;
       // d.fy = null;
       d3.select(this).classed('fixed', true);
+    }
+
+    function resize() {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      svg.attr('width', windowWidth).attr('height', windowHeight);
+      // force.size([windowWidth, windowHeight]).resume();
     }
   }
 
