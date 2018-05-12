@@ -297,7 +297,7 @@ class json_graph(object):
                     sanatized_graph_json[graph_attribute].append(node_attributes)
             elif graph_attribute == 'links':
                 sanatized_graph_json[graph_attribute] = []
-                for j, edge in enumerate(json_graph_object[graph_attribute]):
+                for _, edge in enumerate(json_graph_object[graph_attribute]):
                     edge_attributes = {
                         'source': edge['source'],
                         'target': edge['target'],
@@ -319,3 +319,26 @@ class json_graph(object):
         sanatized_graph_json = json.JSONEncoder(ensure_ascii=False, allow_nan=False).encode(sanatized_graph_json)
 
         return graph, sanatized_graph_json, fields
+
+    @staticmethod
+    def amplify_network(G, epochs=5, alpha=1.):
+        local_g = G.copy()
+
+        for epoch in range(epochs):
+            egde_traversal = list(nx.edge_dfs(local_g))
+            influence = nx.get_node_attributes(local_g, 'influence')
+            weight_absolute = nx.get_edge_attributes(local_g, 'weight_absolute')
+            
+            for i, (from_node, to_node, node_key) in enumerate(egde_traversal):
+                computed_influence = influence[to_node] + (influence[from_node] * (alpha * weight_absolute[(from_node, to_node, 0)]))
+                if influence[to_node] == 0:
+                    influence[to_node] = 0
+                elif int(copysign(1, influence[to_node])) == 1:
+                    influence[to_node] = computed_influence if computed_influence > 0 else 0
+                else:
+                    influence[to_node] = computed_influence if computed_influence < 0 else 0
+            
+
+            nx.set_node_attributes(local_g, influence, 'influence')
+        
+        return local_g
