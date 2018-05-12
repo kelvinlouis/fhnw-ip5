@@ -353,6 +353,6 @@ class json_graph(object):
             for node, influence in local_g.nodes(data='influence'):
                 if epoch == 0:
                     influence_epochs[node] = []
-                influence_epochs[node].append(influence)
+                influence_epochs[node].append(float("{0:.3f}".format(influence)))
         
         return epochs, {'influence_epochs': influence_epochs}
