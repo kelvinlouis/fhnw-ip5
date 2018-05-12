@@ -5,10 +5,15 @@ import './Graph.css';
 import { GraphPropTypes } from '../propTypes';
 import { max, min } from 'underscore';
 
-const defaultColorScale = d3.scaleOrdinal(d3.schemeCategory20c);
-const nodeColors = d3.scaleLinear()
+const defaultColorScale = d3.scaleOrdinal(d3.schemeCategory20b);
+const nodeColorInfluence = d3.scaleLinear()
   .domain([-1, 0, 1])
   .range(['red', 'black', 'green']);
+
+const nodeColorCycle = d3.scaleLinear()
+  .domain([0, 1])
+  .range(['grey', 'blue']);
+
 const linkColors = d3.scaleLinear()
   .domain([-1, 0, 1])
   .range(['red', 'black', 'green']);
@@ -17,13 +22,13 @@ const colorRangeMap = {};
 colorRangeMap[linkColors(-1)] = 'red';
 colorRangeMap[linkColors(0)] = 'black';
 colorRangeMap[linkColors(1)] = 'green';
-colorRangeMap[defaultColorScale(1)] = 'default';
+colorRangeMap[defaultColorScale(0)] = 'default';
 
 const allLinkColors = [
   linkColors(-1),
   linkColors(0),
   linkColors(1),
-  defaultColorScale(1),
+  defaultColorScale(0),
 ];
 
 function positionLink(d) {
@@ -116,9 +121,26 @@ function applyNodeFilters(nodes, filters) {
     .domain([minValue, maxValue])
     .range([6, 30]);
 
+  let nodeColorScale;
+  let selectedCycle;
+
+  if (colorAttr === 'influence') {
+    nodeColorScale = nodeColorInfluence;
+  } else if (colorAttr.indexOf('cycle') > -1) {
+    nodeColorScale = nodeColorCycle;
+    selectedCycle = +colorAttr.split('_')[1];
+  } else {
+    nodeColorScale = defaultColorScale;
+  }
+
   nodes.forEach((n) => {
     n.size = rscale(n[sizeAttr]) || 10;
-    n.color = colorAttr ? nodeColors(n[colorAttr]) : defaultColorScale(0);
+
+    if (selectedCycle !== undefined) {
+      n.color = nodeColorScale(n.cycles.indexOf(selectedCycle) > -1)
+    } else {
+      n.color = nodeColorScale(n[colorAttr]);
+    }
   });
 }
 
@@ -130,7 +152,7 @@ function applyLinkFilters(links, filters) {
   const maxValue = max(links, l => l[widthAttr])[widthAttr];
   const rscale = d3.scaleLinear()
     .domain([minValue, maxValue])
-    .range([1, 5]);
+    .range([1, 3]);
 
   links.forEach((l) => {
     l.width = rscale(l[widthAttr]) || 1;
