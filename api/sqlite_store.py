@@ -138,7 +138,7 @@ class sqlite_store(object):
 
         graph_json, filter_json = row
         jg = json_graph(graph=graph_json, source='frontend')
-        jg.graph_to_json()
+        graph = jg.graph_to_json()
 
         if filter_json is None:
             filter = {'nodeSize': '', 'nodeColor': '', 'linkWidth': '', 'linkColor': ''}
@@ -160,6 +160,9 @@ class sqlite_store(object):
         node_color_metrics_list = [
             "influence",
             ]
+
+        for _, cycle in enumerate(graph['cycles']):
+            node_color_metrics_list.append('cycle_{}'.format(cycle))
 
         edge_width_metrics_list = [
             "strengthen",
