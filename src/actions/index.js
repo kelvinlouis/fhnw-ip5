@@ -1,5 +1,6 @@
 export const SET_NODE_SIZE_FILTER = 'SET_NODE_SIZE_FILTER';
 export const SET_NODE_COLOR_FILTER = 'SET_NODE_COLOR_FILTER';
+export const SET_NODE_SHOW_FULL_LABEL = 'SET_NODE_SHOW_FULL_LABEL';
 export const SET_LINK_WIDTH_FILTER = 'SET_LINK_WIDTH_FILTER';
 export const SET_LINK_COLOR_FILTER = 'SET_LINK_COLOR_FILTER';
 
@@ -21,6 +22,7 @@ const setFilterList = (type, list) => ({ type, list, });
 
 export const setNodeSizeFilter = (filter, graphId) => setFilter(SET_NODE_SIZE_FILTER, filter, graphId);
 export const setNodeColorFilter = (filter, graphId) => setFilter(SET_NODE_COLOR_FILTER, filter, graphId);
+export const setNodeShowFullLabel = (show) => ({ type: SET_NODE_SHOW_FULL_LABEL, show });
 export const setLinkWidthFilter = (filter, graphId) => setFilter(SET_LINK_WIDTH_FILTER, filter, graphId);
 export const setLinkColorFilter = (filter, graphId) => setFilter(SET_LINK_COLOR_FILTER, filter, graphId);
 

@@ -152,21 +152,10 @@ function shortenLabel(label, len=15) {
   }
 }
 
-function showFullLabel(d) {
-  const id = `label_${d.id}`;
-  const el = document.getElementById(id);
-  el.innerHTML = el.dataset.text;
-}
-
-function resetLabel(d) {
-  const id = `label_${d.id}`;
-  const el = document.getElementById(id);
-  el.innerHTML = shortenLabel(d.label);
-}
-
 class Graph extends Component {
   static propTypes = {
     data: GraphPropTypes,
+    nodeShowFullLabel: PropTypes.bool,
     filters: PropTypes.shape({
       nodeSize: PropTypes.string,
       nodeColor: PropTypes.string,
@@ -178,6 +167,7 @@ class Graph extends Component {
 
   static defaultProps = {
     onNodeDoubleClick: () => {},
+    nodeShowFullLabel: false,
   };
 
   constructor(props) {
@@ -233,7 +223,7 @@ class Graph extends Component {
    * @returns {boolean}
    */
   shouldComponentUpdate(nextProps, nextState) {
-    const { data } = this.props;
+    const { data, nodeShowFullLabel } = this.props;
 
     if (!data) {
       // No graph rendered yet
@@ -244,6 +234,11 @@ class Graph extends Component {
       if (data.id !== nextProps.data.id) {
         // Different graph was selected
         return true;
+      }
+
+      if (nodeShowFullLabel !== nextProps.nodeShowFullLabel) {
+        this.changeLabel();
+        return false;
       }
 
       if (nextProps.data.nodes || nextProps.data.links) {
@@ -308,9 +303,9 @@ class Graph extends Component {
         .attr('class', 'node')
         .attr('r', d => d.size)
         .attr('fill', d => d.color)
-        .on('mouseover', showFullLabel)
-        .on('mouseout', resetLabel)
-        .on('dblclick', (d) => this.onNodeDoubleClick(d))
+        .on('mouseover', d => this.onNodeHover(d))
+        .on('mouseout', d => this.onNodeHoverOut(d))
+        .on('dblclick', d => this.onNodeDoubleClick(d))
         .on('contextmenu', function(d) {
           d3.event.preventDefault();
           d.fx = null;
@@ -333,7 +328,7 @@ class Graph extends Component {
         .attr('class', 'label')
         .attr('x', 10)
         .attr('y', '.35em')
-        .text(d => shortenLabel(d.label));
+        .text(d => this.showLabel(d));
 
     simulation
       .nodes(nodes)
@@ -355,16 +350,22 @@ class Graph extends Component {
 
       // Make sure links are removed if the list
       // links has changed
-      link.data(links).exit().remove();
+      link
+        .data(links)
+        .exit()
+        .remove();
 
-      node.attr('transform', transform)
+      node
+        .attr('transform', transform)
         .attr('r', d => d.size)
         .attr('fill', d => d.color);
 
-      label.attr('transform', transform);
+      label
+        .attr('transform', transform);
     }
 
     this.tick = tick;
+    this.changeLabel = () => label.text(d => this.showLabel(d));
 
     function dragstarted(d) {
       if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -390,6 +391,35 @@ class Graph extends Component {
 
       svg.attr('width', windowWidth).attr('height', windowHeight);
       // force.size([windowWidth, windowHeight]).resume();
+    }
+  }
+
+  showLabel(d) {
+    const { nodeShowFullLabel } = this.props;
+
+    if (!nodeShowFullLabel) {
+      return shortenLabel(d.label)
+    }
+    return d.label;
+  }
+
+  onNodeHover(d) {
+    const { nodeShowFullLabel } = this.props;
+
+    if (!nodeShowFullLabel) {
+      const id = `label_${d.id}`;
+      const el = document.getElementById(id);
+      el.innerHTML = el.dataset.text;
+    }
+  }
+
+  onNodeHoverOut(d) {
+    const { nodeShowFullLabel } = this.props;
+
+    if (!nodeShowFullLabel) {
+      const id = `label_${d.id}`;
+      const el = document.getElementById(id);
+      el.innerHTML = shortenLabel(d.label);
     }
   }
 

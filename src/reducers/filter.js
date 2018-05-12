@@ -3,7 +3,7 @@ import {
   SET_NODE_COLOR_FILTER,
   SET_LINK_WIDTH_FILTER,
   SET_LINK_COLOR_FILTER,
-  CLEAR_SELECTED_GRAPH,
+  CLEAR_SELECTED_GRAPH, SET_NODE_SHOW_FULL_LABEL,
 } from '../actions'
 
 export const nodeSizeFilter = (state = '', action) => {
@@ -25,6 +25,15 @@ export const nodeColorFilter = (state = '', action) => {
       return '';
     default:
     return state;
+  }
+};
+
+export const nodeShowFullLabel = (state = false, action) => {
+  switch (action.type) {
+    case SET_NODE_SHOW_FULL_LABEL:
+      return action.show;
+    default:
+      return state;
   }
 };
 

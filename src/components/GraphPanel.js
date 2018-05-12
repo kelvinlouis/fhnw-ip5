@@ -9,6 +9,8 @@ import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
+import { FormControlLabel } from 'material-ui/Form';
+import Switch from 'material-ui/Switch';
 import FilterSelect from '../components/FilterSelect';
 
 const styles = {
@@ -29,11 +31,13 @@ class GraphPanel extends Component {
 
     nodeSize: PropTypes.string.isRequired,
     nodeColor: PropTypes.string.isRequired,
+    nodeShowFullLabel: PropTypes.bool.isRequired,
     linkWidth: PropTypes.string.isRequired,
     linkColor: PropTypes.string.isRequired,
 
     onNodeSizeChange: PropTypes.func.isRequired,
     onNodeColorChange: PropTypes.func.isRequired,
+    onNodeShowFullLabelChange: PropTypes.func.isRequired,
     onLinkWidthChange: PropTypes.func.isRequired,
     onLinkColorChange: PropTypes.func.isRequired,
 
@@ -47,6 +51,7 @@ class GraphPanel extends Component {
 
   constructor(props) {
     super(props);
+
     if (props.selectedGraph) {
       this.state = {
         name: props.selectedGraph.name,
@@ -96,6 +101,12 @@ class GraphPanel extends Component {
     onLoad();
   };
 
+  handleSwitchLabelChange = event => {
+    const { onNodeShowFullLabelChange } = this.props;
+
+    onNodeShowFullLabelChange(event.target.checked);
+  };
+
   render() {
     const {
       classes,
@@ -106,6 +117,7 @@ class GraphPanel extends Component {
 
       nodeSize,
       nodeColor,
+      nodeShowFullLabel,
       linkWidth,
       linkColor,
 
@@ -141,6 +153,16 @@ class GraphPanel extends Component {
               onChange={(value) => onNodeColorChange(value, selectedGraph.id)}
             />
             {/*<FilterSelect id="nodeCycle" label="Zyklen" list={nodeSizeColors} value={} onChange={} />*/}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={nodeShowFullLabel}
+                  onChange={this.handleSwitchLabelChange}
+                  color="primary"
+                />
+              }
+              label="Ganze Beschriftung anzeigen"
+            />
           </ExpansionPanelDetails>
         </ExpansionPanel>
         <ExpansionPanel>
