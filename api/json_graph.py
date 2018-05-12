@@ -160,6 +160,8 @@ class json_graph(object):
         if metrics:
             degree_metrics = self.rebuild_metric(graph, ['weight','weight_absolute','strengthen','weaken'])
             node_metrics.update(degree_metrics)
+            amplify_epochs, amplify_metrics = self.amplify_network(epochs=10, alpha=0.05)
+            node_metrics.update(amplify_metrics)
             # degree_centrality = self.generate_metric(graph, 'degree_centrality', nx.degree_centrality)
             # node_metrics.update(degree_centrality)
             # in_degree_centrality = self.generate_metric(graph, 'in_degree_centrality', nx.in_degree_centrality)
@@ -190,13 +192,16 @@ class json_graph(object):
             # Find cycles and build a 'cycle id' list
             # Nodes with the same 'cycle id' belong to the same cycle
             cycles_list = []
-            for i, cycle in enumerate(list(nx.simple_cycles(graph))):
-                cycles_list.append(i)
-                for _, node in enumerate(cycle):
-                    cycles[node].append(i)
+            cycle_id = 0
+            for _, cycle in enumerate(list(nx.simple_cycles(graph))):
+                if len(cycle) <= 3:
+                    cycles_list.append(cycle_id)
+                    for _, node in enumerate(cycle):
+                        cycles[node].append(cycle_id)
+                    cycle_id += 1
             
         # Fill 'nodes' dict
-        for i, (_, node_attributes) in enumerate(graph.nodes(data=True)):
+        for _, (_, node_attributes) in enumerate(graph.nodes(data=True)):
             attributes = {
                 'id': node_attributes['id'],
                 'label': node_attributes['label'],
@@ -247,6 +252,7 @@ class json_graph(object):
         
         if metrics:
             json_object['cycles'] = cycles_list
+            json_object['influence_epochs'] = amplify_epochs
             #json_object['nodeProperties'] = node_metrics_list
             #json_object['edgeProperties'] = edge_metrics_list
         json_object['nodes'] = nodes
@@ -320,25 +326,33 @@ class json_graph(object):
 
         return graph, sanatized_graph_json, fields
 
-    @staticmethod
-    def amplify_network(G, epochs=5, alpha=1.):
-        local_g = G.copy()
+    def amplify_network(self, epochs=5, alpha=1.):
+        local_g = self.graph.copy()
+        influence_epochs = {}
 
         for epoch in range(epochs):
             egde_traversal = list(nx.edge_dfs(local_g))
             influence = nx.get_node_attributes(local_g, 'influence')
             weight_absolute = nx.get_edge_attributes(local_g, 'weight_absolute')
             
-            for i, (from_node, to_node, node_key) in enumerate(egde_traversal):
-                computed_influence = influence[to_node] + (influence[from_node] * (alpha * weight_absolute[(from_node, to_node, 0)]))
+            for _, (from_node, to_node, _) in enumerate(egde_traversal):
                 if influence[to_node] == 0:
-                    influence[to_node] = 0
-                elif int(copysign(1, influence[to_node])) == 1:
-                    influence[to_node] = computed_influence if computed_influence > 0 else 0
+                    computed_influence = 0
                 else:
-                    influence[to_node] = computed_influence if computed_influence < 0 else 0
+                    computed_influence = influence[to_node] + (influence[from_node] * (alpha * weight_absolute[(from_node, to_node, 0)]))
             
+                    if int(copysign(1, influence[to_node])) == 1:
+                        computed_influence = computed_influence if computed_influence > 0 else 0
+                    elif computed_influence > 0:
+                        computed_influence = computed_influence if computed_influence < 0 else 0
+
+                influence[to_node] = computed_influence
 
             nx.set_node_attributes(local_g, influence, 'influence')
+
+            for node, influence in local_g.nodes(data='influence'):
+                if epoch == 0:
+                    influence_epochs[node] = []
+                influence_epochs[node].append(influence)
         
-        return local_g
+        return epochs, {'influence_epochs': influence_epochs}
