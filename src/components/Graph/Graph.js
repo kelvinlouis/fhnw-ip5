@@ -143,6 +143,27 @@ function applyFilters(filters, nodes, links) {
   applyLinkFilters(links, filters);
 }
 
+function shortenLabel(label, len=15) {
+  const cutOfAt = len - 3;
+  if (label.length > cutOfAt) {
+    return `${label.substr(0, cutOfAt)}...`;
+  } else {
+    return label;
+  }
+}
+
+function showFullLabel(d) {
+  const id = `label_${d.id}`;
+  const el = document.getElementById(id);
+  el.innerHTML = el.dataset.text;
+}
+
+function resetLabel(d) {
+  const id = `label_${d.id}`;
+  const el = document.getElementById(id);
+  el.innerHTML = shortenLabel(d.label);
+}
+
 class Graph extends Component {
   static propTypes = {
     data: GraphPropTypes,
@@ -287,6 +308,8 @@ class Graph extends Component {
         .attr('class', 'node')
         .attr('r', d => d.size)
         .attr('fill', d => d.color)
+        .on('mouseover', showFullLabel)
+        .on('mouseout', resetLabel)
         .on('dblclick', (d) => this.onNodeDoubleClick(d))
         .on('contextmenu', function(d) {
           d3.event.preventDefault();
@@ -303,11 +326,14 @@ class Graph extends Component {
       .attr('class', 'labels')
       .selectAll('text')
       .data(nodes)
-      .enter().append('text')
-      .attr('class','label')
-      .attr('x', 10)
-      .attr('y', '.35em')
-      .text(d => d.label);
+      .enter()
+      .append('text')
+        .attr('id', d => `label_${d.id}`)
+        .attr('data-text', d => d.label)
+        .attr('class', 'label')
+        .attr('x', 10)
+        .attr('y', '.35em')
+        .text(d => shortenLabel(d.label));
 
     simulation
       .nodes(nodes)
