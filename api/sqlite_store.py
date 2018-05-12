@@ -183,6 +183,8 @@ class sqlite_store(object):
         if not filter['linkColor'] in edge_color_metrics_list:
             filter['linkColor'] = ''
 
+        filter['nodeEpochs'] = graph['influence_epochs']
+
         filter['nodeSizeOptions'] = node_size_metrics_list
         filter['nodeColorOptions'] = node_color_metrics_list
         filter['linkWidthOptions'] = edge_width_metrics_list
