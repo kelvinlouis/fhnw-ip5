@@ -2,7 +2,8 @@ import {
   SET_NODE_SIZE_FILTER_LIST,
   SET_NODE_COLOR_FILTER_LIST,
   SET_LINK_WIDTH_FILTER_LIST,
-  SET_LINK_COLOR_FILTER_LIST
+  SET_LINK_COLOR_FILTER_LIST,
+  SET_NODE_EPOCHS,
 } from '../actions'
 
 export const nodeSizeFilterList = (state = [], action) => {
@@ -18,6 +19,15 @@ export const nodeColorFilterList = (state = [], action) => {
   switch (action.type) {
     case SET_NODE_COLOR_FILTER_LIST:
       return action.list;
+    default:
+      return state;
+  }
+};
+
+export const nodeEpochs = (state = 10, action) => {
+  switch (action.type) {
+    case SET_NODE_EPOCHS:
+      return action.value;
     default:
       return state;
   }

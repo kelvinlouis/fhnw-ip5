@@ -3,7 +3,12 @@ import {
   setNodeSizeFilter,
   setNodeColorFilter,
   setLinkWidthFilter,
-  setLinkColorFilter, clearSelectedGraph, addGraph, selectGraph, setNodeShowFullLabel,
+  setLinkColorFilter,
+  clearSelectedGraph,
+  addGraph,
+  selectGraph,
+  setNodeShowFullLabel,
+  setNodeEpoch,
 } from '../actions';
 import GraphPanel from '../components/GraphPanel';
 import { getSelectedGraph } from '../reducers/graph';
@@ -23,6 +28,9 @@ const mapStateToProps = state => ({
   linkWidth: state.linkWidthFilter,
   linkColor: state.linkColorFilter,
 
+  nodeEpoch: state.nodeEpoch,
+  nodeEpochs: state.nodeEpochs,
+
   // Selected graph
   selectedGraph: getSelectedGraph(state),
 });
@@ -33,6 +41,8 @@ const mapDispatchToProps = dispatch => ({
   onNodeShowFullLabelChange: (show) => dispatch(setNodeShowFullLabel(show)),
   onLinkWidthChange: (value, graphId) => dispatch(setLinkWidthFilter(value, graphId)),
   onLinkColorChange: (value, graphId) => dispatch(setLinkColorFilter(value, graphId)),
+  onNodeEpochChange: (value, graphId) => dispatch(setNodeEpoch(value, graphId)),
+
   onLoad: () => dispatch(clearSelectedGraph()),
   onSave: async (graph, filters) => {
     const newGraph = await createGraph(graph);

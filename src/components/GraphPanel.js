@@ -9,8 +9,14 @@ import Typography from 'material-ui/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import { FormControlLabel } from 'material-ui/Form';
+import IconButton from 'material-ui/IconButton';
+import PlayIcon from '@material-ui/icons/PlayArrow';
+import { FormControlLabel, FormLabel, FormControl } from 'material-ui/Form';
 import Switch from 'material-ui/Switch';
+import indigo from 'material-ui/colors/indigo';
+import 'rc-slider/assets/index.css';
+import Slider from 'rc-slider';
+
 import FilterSelect from '../components/FilterSelect';
 
 const styles = {
@@ -20,6 +26,36 @@ const styles = {
   button: {
     'margin': '0 0.25em',
   },
+  sliderFormControl: {
+    'width': '100%',
+    'margin': '0.25em 0',
+  },
+  sliderFormControlLabel: {
+    'font-size': '0.8rem',
+    'margin-bottom': '0.5em',
+  },
+  sliderContainer: {
+    'display': 'inline-flex',
+    'align-items': 'center',
+  },
+  playButton: {
+    'height': '24px',
+    'width': '24px',
+    'font-size': '0.8rem',
+    'margin':'0 0 0 1.5em',
+  },
+  sliderHandle: {
+    'borderColor': indigo['500'],
+  },
+  sliderTrack: {
+    'backgroundColor': indigo['300'],
+  },
+  dot: {
+    'borderColor': indigo['300'],
+  },
+  activeDot: {
+    'borderColor': indigo['300'],
+  }
 };
 
 class GraphPanel extends Component {
@@ -35,11 +71,15 @@ class GraphPanel extends Component {
     linkWidth: PropTypes.string.isRequired,
     linkColor: PropTypes.string.isRequired,
 
+    nodeEpoch: PropTypes.number.isRequired,
+    nodeEpochs: PropTypes.number.isRequired,
+
     onNodeSizeChange: PropTypes.func.isRequired,
     onNodeColorChange: PropTypes.func.isRequired,
     onNodeShowFullLabelChange: PropTypes.func.isRequired,
     onLinkWidthChange: PropTypes.func.isRequired,
     onLinkColorChange: PropTypes.func.isRequired,
+    onNodeEpochChange: PropTypes.func.isRequired,
 
     onLoad: PropTypes.func.isRequired,
 
@@ -73,10 +113,6 @@ class GraphPanel extends Component {
     return prevState;
   }
 
-  onNameChange = event => {
-    this.setState({ name: event.target.value });
-  };
-
   save = event => {
     const { onSave, selectedGraph, nodeSize, nodeColor, linkWidth, linkColor } = this.props;
     const { name } = this.state;
@@ -99,6 +135,15 @@ class GraphPanel extends Component {
   load = event => {
     const { onLoad } = this.props;
     onLoad();
+  };
+
+  onNameChange = event => {
+    this.setState({ name: event.target.value });
+  };
+
+  onSliderEpochChange = value => {
+    const { onNodeEpochChange, selectedGraph } = this.props;
+    onNodeEpochChange(value, selectedGraph.id);
   };
 
   handleSwitchLabelChange = event => {
@@ -126,6 +171,9 @@ class GraphPanel extends Component {
       onLinkWidthChange,
       onLinkColorChange,
 
+      nodeEpoch,
+      nodeEpochs,
+
       selectedGraph,
     } = this.props;
 
@@ -145,6 +193,7 @@ class GraphPanel extends Component {
               value={nodeSize}
               onChange={(value) => onNodeSizeChange(value, selectedGraph.id)}
             />
+
             <FilterSelect
               id="nodeColor"
               label="Farbe"
@@ -152,7 +201,27 @@ class GraphPanel extends Component {
               value={nodeColor}
               onChange={(value) => onNodeColorChange(value, selectedGraph.id)}
             />
-            {/*<FilterSelect id="nodeCycle" label="Zyklen" list={nodeSizeColors} value={} onChange={} />*/}
+            {nodeColor === 'influence' && (
+              <FormControl className={classes.sliderFormControl}>
+                <FormLabel className={classes.sliderFormControlLabel}>Epochen</FormLabel>
+                <div className={classes.sliderContainer}>
+                  <Slider
+                    onChange={this.onSliderEpochChange}
+                    max={nodeEpochs}
+                    value={nodeEpoch}
+                    dots={true}
+                    handleStyle={styles.sliderHandle}
+                    trackStyle={styles.sliderTrack}
+                    dotStyle={styles.dot}
+                    activeDotStyle={styles.activeDot}
+                  />
+                  <IconButton className={classes.playButton} aria-label="Play" color="primary">
+                    <PlayIcon />
+                  </IconButton>
+                </div>
+              </FormControl>
+            )}
+
             <FormControlLabel
               control={
                 <Switch

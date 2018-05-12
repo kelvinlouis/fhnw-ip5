@@ -8,7 +8,7 @@ import { max, min } from 'underscore';
 const defaultColorScale = d3.scaleOrdinal(d3.schemeCategory20b);
 const nodeColorInfluence = d3.scaleLinear()
   .domain([-1, 0, 1])
-  .range(['red', 'black', 'green']);
+  .range(['red', 'grey', 'green']);
 
 const nodeColorCycle = d3.scaleLinear()
   .domain([0, 1])
@@ -16,11 +16,11 @@ const nodeColorCycle = d3.scaleLinear()
 
 const linkColors = d3.scaleLinear()
   .domain([-1, 0, 1])
-  .range(['red', 'black', 'green']);
+  .range(['red', 'grey', 'green']);
 
 const colorRangeMap = {};
 colorRangeMap[linkColors(-1)] = 'red';
-colorRangeMap[linkColors(0)] = 'black';
+colorRangeMap[linkColors(0)] = 'grey';
 colorRangeMap[linkColors(1)] = 'green';
 colorRangeMap[defaultColorScale(0)] = 'default';
 
@@ -156,7 +156,7 @@ function applyLinkFilters(links, filters) {
 
   links.forEach((l) => {
     l.width = rscale(l[widthAttr]) || 1;
-    l.color = colorAttr ? linkColors(l[colorAttr]) : defaultColorScale(1);
+    l.color = colorAttr ? linkColors(l[colorAttr]) : defaultColorScale(0);
   });
 }
 

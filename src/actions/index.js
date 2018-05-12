@@ -9,6 +9,9 @@ export const SET_NODE_COLOR_FILTER_LIST = 'SET_NODE_COLOR_FILTER_LIST';
 export const SET_LINK_WIDTH_FILTER_LIST = 'SET_LINK_WIDTH_FILTER_LIST';
 export const SET_LINK_COLOR_FILTER_LIST = 'SET_LINK_COLOR_FILTER_LIST';
 
+export const SET_NODE_EPOCH = 'SET_NODE_EPOCH';
+export const SET_NODE_EPOCHS = 'SET_NODE_EPOCHS';
+
 export const ADD_GRAPH = 'ADD_GRAPH';
 export const SELECT_GRAPH = 'SELECT_GRAPH';
 export const CLEAR_SELECTED_GRAPH = 'CLEAR_SELECTED_GRAPH';
@@ -30,6 +33,9 @@ export const setNodeSizeFilterList = list => setFilterList(SET_NODE_SIZE_FILTER_
 export const setNodeColorFilterList = list => setFilterList(SET_NODE_COLOR_FILTER_LIST, list);
 export const setLinkWidthFilterList = list => setFilterList(SET_LINK_WIDTH_FILTER_LIST, list);
 export const setLinkColorFilterList = list => setFilterList(SET_LINK_COLOR_FILTER_LIST, list);
+
+export const setNodeEpoch = (value, graphId) => ({ type: SET_NODE_EPOCH, value, graphId });
+export const setNodeEpochs = value => ({ type: SET_NODE_EPOCHS, value });
 
 export const addGraph = (id, data) => ({ type: ADD_GRAPH, id, data });
 export const selectGraph = id => ({ type: SELECT_GRAPH, id });
