@@ -181,6 +181,7 @@ class Graph extends Component {
     filters: PropTypes.shape({
       nodeSize: PropTypes.string,
       nodeColor: PropTypes.string,
+      nodeEpoch: PropTypes.number,
       linkWidth: PropTypes.string,
       linkColor: PropTypes.string,
     }),
@@ -257,6 +258,8 @@ class Graph extends Component {
         // Different graph was selected
         return true;
       }
+
+      console.log(nextProps.filters.nodeEpoch);
 
       if (nodeShowFullLabel !== nextProps.nodeShowFullLabel) {
         this.changeLabel();

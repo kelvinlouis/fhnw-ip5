@@ -43,6 +43,8 @@ export const nodeEpoch = (state = 0, action) => {
   switch (action.type) {
     case SET_NODE_EPOCH:
       return action.value;
+    case CLEAR_SELECTED_GRAPH:
+      return 0;
     default:
       return state;
   }

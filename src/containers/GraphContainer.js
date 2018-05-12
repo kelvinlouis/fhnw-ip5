@@ -9,6 +9,7 @@ const mapStateToProps = state => ({
   filters: {
     nodeSize: state.nodeSizeFilter,
     nodeColor: state.nodeColorFilter,
+    nodeEpoch: state.nodeEpoch,
     linkWidth: state.linkWidthFilter,
     linkColor: state.linkColorFilter,
   },

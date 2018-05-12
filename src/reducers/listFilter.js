@@ -24,10 +24,10 @@ export const nodeColorFilterList = (state = [], action) => {
   }
 };
 
-export const nodeEpochs = (state = 10, action) => {
+export const nodeEpochs = (state = 1, action) => {
   switch (action.type) {
     case SET_NODE_EPOCHS:
-      return action.value;
+      return action.value - 1;
     default:
       return state;
   }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { debounce } from 'underscore';
 import { withStyles } from 'material-ui/styles';
 import ExpansionPanel, {
   ExpansionPanelDetails,
@@ -146,6 +147,25 @@ class GraphPanel extends Component {
     onNodeEpochChange(value, selectedGraph.id);
   };
 
+  onPlayClick = () => {
+    const {
+      onNodeEpochChange,
+      nodeEpoch,
+      nodeEpochs,
+      selectedGraph,
+    } = this.props;
+
+    let activeEpoch = nodeEpoch;
+
+    const interval = setInterval(() => {
+        onNodeEpochChange(++activeEpoch, selectedGraph.id);
+
+        if (activeEpoch === nodeEpochs) {
+          clearInterval(interval);
+        }
+    }, 1000);
+  };
+
   handleSwitchLabelChange = event => {
     const { onNodeShowFullLabelChange } = this.props;
 
@@ -216,7 +236,7 @@ class GraphPanel extends Component {
                     activeDotStyle={styles.activeDot}
                   />
                   <IconButton className={classes.playButton} aria-label="Play" color="primary">
-                    <PlayIcon />
+                    <PlayIcon onClick={this.onPlayClick} />
                   </IconButton>
                 </div>
               </FormControl>

@@ -13,7 +13,7 @@ import {
   setNodeSizeFilter,
   setNodeColorFilter,
   setLinkColorFilter,
-  setLinkWidthFilter,
+  setLinkWidthFilter, setNodeEpochs,
 } from './actions';
 import GraphLoader from './components/GraphLoader/GraphLoader';
 import GraphContainer from './containers/GraphContainer';
@@ -57,6 +57,7 @@ class App extends Component {
     if (filters) {
       dispatch(setNodeSizeFilterList(filters.nodeSizeOptions));
       dispatch(setNodeColorFilterList(filters.nodeColorOptions));
+      dispatch(setNodeEpochs(filters.nodeEpochs));
       dispatch(setLinkWidthFilterList(filters.linkWidthOptions));
       dispatch(setLinkColorFilterList(filters.linkColorOptions));
 
