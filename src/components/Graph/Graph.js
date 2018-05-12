@@ -6,6 +6,25 @@ import { GraphPropTypes } from '../propTypes';
 import { max, min } from 'underscore';
 
 const defaultColorScale = d3.scaleOrdinal(d3.schemeCategory20c);
+const nodeColors = d3.scaleLinear()
+  .domain([-1, 0, 1])
+  .range(['red', 'black', 'green']);
+const linkColors = d3.scaleLinear()
+  .domain([-1, 0, 1])
+  .range(['red', 'black', 'green']);
+
+const colorRangeMap = {};
+colorRangeMap[linkColors(-1)] = 'red';
+colorRangeMap[linkColors(0)] = 'black';
+colorRangeMap[linkColors(1)] = 'green';
+colorRangeMap[defaultColorScale(1)] = 'default';
+
+const allLinkColors = [
+  linkColors(-1),
+  linkColors(0),
+  linkColors(1),
+  defaultColorScale(1),
+];
 
 function positionLink(d) {
   let x1 = d.source.x;
@@ -96,13 +115,10 @@ function applyNodeFilters(nodes, filters) {
   const rscale = d3.scaleLinear()
     .domain([minValue, maxValue])
     .range([6, 30]);
-  const color = d3.scaleLinear()
-    .domain([-1, 0, 1])
-    .range(['red', 'black', 'green']);
 
   nodes.forEach((n) => {
     n.size = rscale(n[sizeAttr]) || 10;
-    n.color = colorAttr ? color(n[colorAttr]) : defaultColorScale(0);
+    n.color = colorAttr ? nodeColors(n[colorAttr]) : defaultColorScale(0);
   });
 }
 
@@ -116,13 +132,9 @@ function applyLinkFilters(links, filters) {
     .domain([minValue, maxValue])
     .range([1, 5]);
 
-  const color = d3.scaleLinear()
-    .domain([-1, 0, 1])
-    .range(['red', 'black', 'green']);
-
   links.forEach((l) => {
     l.width = rscale(l[widthAttr]) || 1;
-    l.color = colorAttr ? color(l[colorAttr]) : defaultColorScale(1);
+    l.color = colorAttr ? linkColors(l[colorAttr]) : defaultColorScale(1);
   });
 }
 
@@ -241,47 +253,51 @@ class Graph extends Component {
       .force('center', d3.forceCenter(width / 2, height / 2));
 
     svg.append('defs').selectAll('marker')
-      .data(['default'])
-      .enter().append('marker')
-      .attr('id', d => d)
-      .attr('viewBox', '0 -5 10 10')
-      .attr('refX', 10)
-      .attr('refY', 0)
-      .attr('markerWidth', 6)
-      .attr('markerHeight', 6)
-      .attr('orient', 'auto')
+      .data(allLinkColors)
+      .enter()
+      .append('marker')
+        .attr('id', d => `marker_${colorRangeMap[d]}`)
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 10)
+        .attr('refY', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto')
       .append('path')
-      .attr('d', 'M0,-5L10,0L0,5');
+        .attr('fill', d => d)
+        .attr('d', 'M0,-5L10,0L0,5');
 
     const link = svg.append('g')
       .attr('class', 'links')
       .selectAll('path')
       .data(links)
-      .enter().append('path')
-      .attr('class', d => 'link')
-      .attr('marker-end', d => 'url(#default)')
-      .style('stroke', d => d.color)
-      .style('stroke-width', d => `${d.width}px`);
+      .enter()
+      .append('path')
+        .attr('class', d => 'link')
+        .attr('marker-end', d => `url(#marker_${colorRangeMap[d.color]})`)
+        .style('stroke', d => d.color)
+        .style('stroke-width', d => `${d.width}px`);
 
     const node = svg.append('g')
       .attr('class', 'nodes')
       .selectAll('circle')
       .data(nodes)
-      .enter().append('circle')
-      .attr('class', 'node')
-      .attr('r', d => d.size)
-      .attr('fill', d => d.color)
-      .on('dblclick', (d) => this.onNodeDoubleClick(d))
-      .on('contextmenu', function (d, i) {
-        d3.event.preventDefault();
-        d.fx = null;
-        d.fy = null;
-        d3.select(this).classed('fixed', false);
-      })
-      .call(d3.drag()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended));
+      .enter()
+      .append('circle')
+        .attr('class', 'node')
+        .attr('r', d => d.size)
+        .attr('fill', d => d.color)
+        .on('dblclick', (d) => this.onNodeDoubleClick(d))
+        .on('contextmenu', function(d) {
+          d3.event.preventDefault();
+          d.fx = null;
+          d.fy = null;
+          d3.select(this).classed('fixed', false);
+        })
+        .call(d3.drag()
+          .on('start', dragstarted)
+          .on('drag', dragged)
+          .on('end', dragended));
 
     const label = svg.append('g')
       .attr('class', 'labels')
@@ -305,7 +321,9 @@ class Graph extends Component {
     d3.select(window).on('resize', resize);
 
     function tick() {
-      link.attr('d', positionLink)
+      link
+        .attr('d', positionLink)
+        .attr('marker-end', d => `url(#marker_${colorRangeMap[d.color]})`)
         .style('stroke', d => d.color)
         .style('stroke-width', d => `${d.width}px`);
 
