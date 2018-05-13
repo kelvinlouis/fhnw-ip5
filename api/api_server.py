@@ -3,7 +3,6 @@ from flask_cors import CORS
 import os
 import codecs
 import sqlite_store
-import json_graph
 
 app = Flask(__name__)
 app.config.update(
