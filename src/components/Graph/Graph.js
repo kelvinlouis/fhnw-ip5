@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import './Graph.css';
 import { GraphPropTypes } from '../propTypes';
-import { max, min } from 'underscore';
+import { max, min, reduce, reduceRight } from 'underscore';
 
 const defaultColorScale = d3.scaleOrdinal(d3.schemeCategory20b);
 const nodeColorInfluence = d3.scaleLinear()
   .domain([-1, 0, 1])
-  .range(['red', 'grey', 'green']);
+  .range(['#e76300', 'grey', '#94d658']);
 
 const nodeColorCycle = d3.scaleLinear()
   .domain([0, 1])
@@ -16,7 +16,7 @@ const nodeColorCycle = d3.scaleLinear()
 
 const linkColors = d3.scaleLinear()
   .domain([-1, 0, 1])
-  .range(['red', 'grey', 'green']);
+  .range(['#e76300', 'grey', '#94d658']);
 
 const colorRangeMap = {};
 colorRangeMap[linkColors(-1)] = 'red';
@@ -113,6 +113,7 @@ function updateLinks(prevLinks, nextLinks) {
 function applyNodeFilters(nodes, filters) {
   const sizeAttr = filters.nodeSize;
   const colorAttr = filters.nodeColor;
+  const epoch = filters.nodeEpoch;
 
   const minValue = min(nodes, n => n[sizeAttr])[sizeAttr];
   const maxValue = max(nodes, n => n[sizeAttr])[sizeAttr];
@@ -125,7 +126,7 @@ function applyNodeFilters(nodes, filters) {
   let selectedCycle;
 
   if (colorAttr === 'influence') {
-    nodeColorScale = nodeColorInfluence;
+    nodeColorScale = setInfluenceColorScale(nodes);
   } else if (colorAttr.indexOf('cycle') > -1) {
     nodeColorScale = nodeColorCycle;
     selectedCycle = +colorAttr.split('_')[1];
@@ -138,6 +139,8 @@ function applyNodeFilters(nodes, filters) {
 
     if (selectedCycle !== undefined) {
       n.color = nodeColorScale(n.cycles.indexOf(selectedCycle) > -1)
+    } else if (colorAttr === 'influence') {
+      n.color = nodeColorScale(n.influence_epochs[epoch]);
     } else {
       n.color = nodeColorScale(n[colorAttr]);
     }
@@ -172,6 +175,18 @@ function shortenLabel(label, len=15) {
   } else {
     return label;
   }
+}
+
+function setInfluenceColorScale(nodes) {
+  const allInfluences = reduceRight(nodes, (a, b) => a.concat(b.influence_epochs), []);
+  const minValue = min(allInfluences);
+  const maxValue = max(allInfluences);
+  const mean = reduce(allInfluences, (a, b) => a + b, 0) / allInfluences.length;
+
+  return d3.scaleLinear()
+    .domain([minValue, -1, mean, 1, maxValue])
+    .range(['#8b0000','#e76300','#ffff00','#94d658','#008000'])
+    // .range(['darkred', 'red', 'yellow', 'green', '#42ff00']);
 }
 
 class Graph extends Component {
@@ -259,8 +274,6 @@ class Graph extends Component {
         return true;
       }
 
-      console.log(nextProps.filters.nodeEpoch);
-
       if (nodeShowFullLabel !== nextProps.nodeShowFullLabel) {
         this.changeLabel();
         return false;
@@ -327,7 +340,7 @@ class Graph extends Component {
       .append('circle')
         .attr('class', 'node')
         .attr('r', d => d.size)
-        .attr('fill', d => d.color)
+        .style('fill', d => d.color)
         .on('mouseover', d => this.onNodeHover(d))
         .on('mouseout', d => this.onNodeHoverOut(d))
         .on('dblclick', d => this.onNodeDoubleClick(d))
@@ -383,7 +396,9 @@ class Graph extends Component {
       node
         .attr('transform', transform)
         .attr('r', d => d.size)
-        .attr('fill', d => d.color);
+        .transition()
+        .duration(1000)
+        .style('fill', d => d.color);
 
       label
         .attr('transform', transform);
