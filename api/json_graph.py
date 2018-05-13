@@ -20,10 +20,10 @@ class json_graph(object):
     @staticmethod
     def get_action_systems(data):
         entries = {}
-        
+
         for _, entry in enumerate(data):
             entries[entry['id']] = entry['name']
-        
+
         return entries
 
     @staticmethod
@@ -33,14 +33,14 @@ class json_graph(object):
         node_action_systems_id = {}
         node_action_systems = {}
         influences = {}
-        
+
         for i, entry in enumerate(data):
             identifier[i] = entry['id']
             labels[i] = entry['title']
             node_action_systems_id[i] = entry['actionSystemId']
             node_action_systems[i] = action_systems[entry['actionSystemId']]
             influences[i] = entry['influence']
-        
+
         return identifier, labels, node_action_systems_id, node_action_systems, influences
 
     # Loads the inital json and creates a networkx multidi graph
@@ -51,7 +51,7 @@ class json_graph(object):
         Keyword arguments:
         graph_json -- JSON encoded string in original structure
         """
-        
+
         json_data = json.JSONDecoder().decode(graph_json)
         action_systems = {}
 
@@ -63,13 +63,13 @@ class json_graph(object):
         graph = nx.MultiDiGraph()
 
         for _, life_entry in enumerate(json_data['lifeEntries']):
-            graph.add_node(life_entry['id'], 
-                        id=life_entry['id'], 
-                        label=str(life_entry['title']), 
+            graph.add_node(life_entry['id'],
+                        id=life_entry['id'],
+                        label=str(life_entry['title']),
                         influence=int(life_entry['influence']),
                         actionSystemId=life_entry['actionSystemId'],
                         actionSystem=str(action_systems[life_entry['actionSystemId']]))
-        
+
         for i, connection_row in enumerate(json_data['connections']):
             for j, connection_cell in enumerate(connection_row):
                 if connection_cell != '0':
@@ -80,7 +80,7 @@ class json_graph(object):
                     sign = int(copysign(1, weight))
                     strengthen = int(weight_absolute if sign == 1 else 0)
                     weaken = int(weight_absolute if sign == -1 else 0)
-                    
+
                     graph.add_edge(source, target, source=source,
                             target=target,
                             weight=weight,
@@ -88,7 +88,7 @@ class json_graph(object):
                             strengthen=strengthen,
                             weaken=weaken,
                             sign=sign)
-        
+
         return graph
 
     def generate_metric(self, graph, metric_name, metric_function, weights=[]):
@@ -101,7 +101,7 @@ class json_graph(object):
         metric_function -- function to calculate metric, func(G [, weight=weights])
         weights -- list of weight attribute names in graph (default [])
         """
-        
+
         metric_data = {}
         if len(weights) == 0:
             # Metric is unweighted
@@ -110,7 +110,7 @@ class json_graph(object):
             # Metric is weighted, go though every weight attribute
             for _, weight in enumerate(weights):
                 metric_data['{}_{}'.format(metric_name, weight)] = metric_function(graph, weight=weight)
-                
+
         return metric_data
 
     def rebuild_metric(self, graph, weights=[]):
@@ -121,13 +121,13 @@ class json_graph(object):
         graph -- the graph for which metrics should be generated
         weights -- list of weight attribute names in graph (default [])
         """
-        
+
         metric_data = {}
         for _, weight in enumerate(weights):
             metric_data['degree_{}'.format(weight)] = graph.degree(weight=weight)
             metric_data['in_degree_{}'.format(weight)] = graph.in_degree(weight=weight)
             metric_data['out_degree_{}'.format(weight)] = graph.out_degree(weight=weight)
-        
+
         metric_data['degree'] = graph.degree()
         metric_data['in_degree'] = graph.in_degree()
         metric_data['out_degree'] = graph.out_degree()
@@ -142,18 +142,18 @@ class json_graph(object):
         graph -- the graph for which metrics should be generated
         metrics -- if metrics shound be included in output
         """
-        
+
         if graph == None:
             graph = self.graph
 
         json_object = {}
         nodes = []
         links = []
-        
+
         # If a key does not exist on access, generate empty list
         # So every node gets a 'cycle' attribute, even if it's just an empty list
         cycles = defaultdict(list)
-        
+
         # Create node_metrics list
         node_metrics = {'influence': None}
 
@@ -189,7 +189,7 @@ class json_graph(object):
             # node_metrics.update(betweenness_centrality_weighted)
 
             self.node_metrics_list = sorted(list(node_metrics.keys()))
-        
+
             # Find cycles and build a 'cycle id' list
             # Nodes with the same 'cycle id' belong to the same cycle
             cycles_list = []
@@ -200,7 +200,7 @@ class json_graph(object):
                     for _, node in enumerate(cycle):
                         cycles[node].append(cycle_id)
                     cycle_id += 1
-            
+
         # Fill 'nodes' dict
         for _, (_, node_attributes) in enumerate(graph.nodes(data=True)):
             attributes = {
@@ -216,11 +216,11 @@ class json_graph(object):
                 for _, metric in enumerate(node_metrics):
                     if not node_metrics[metric] is None:
                         attributes[metric] = node_metrics[metric][node_attributes['id']]
-            
+
             nodes.append(attributes)
 
         edge_metrics = {'weight':None, 'weight_absolute': None, 'strengthen': None, 'weaken': None, 'sign': None}
-        
+
         # Get all possible directed graph metrics and add them to 'edge_metrics' dict
         if metrics:
             # edge_betweenness_centrality = self.generate_metric(graph, 'edge_betweenness_centrality', nx.edge_betweenness_centrality)
@@ -229,9 +229,9 @@ class json_graph(object):
             # edge_metrics.update(edge_betweenness_centrality_weighted)
             # edge_load_centrality = self.generate_metric(graph, 'edge_load_centrality', nx.edge_load_centrality)
             # edge_metrics.update(edge_load_centrality)
-            
+
             self.edge_metrics_list = sorted(list(edge_metrics.keys()))
-        
+
         # Fill 'links' dict
         for (from_node, to_node, edge_attributes) in graph.edges(data=True):
             attributes = {
@@ -248,9 +248,9 @@ class json_graph(object):
                 for _, metric in enumerate(edge_metrics):
                     if not edge_metrics[metric] is None:
                         attributes[metric] = edge_metrics[metric][(from_node, to_node)]
-                    
+
             links.append(attributes)
-        
+
         if metrics:
             json_object['cycles'] = cycles_list
             json_object['influence_epochs'] = amplify_epochs
@@ -258,7 +258,7 @@ class json_graph(object):
             #json_object['edgeProperties'] = edge_metrics_list
         json_object['nodes'] = nodes
         json_object['links'] = links
-        
+
         return json_object
 
     @staticmethod
@@ -274,7 +274,7 @@ class json_graph(object):
             json_graph_object = json.JSONDecoder().decode(graph_json)
         else:
             json_graph_object = graph_json
-        
+
 
         graph = nx.MultiDiGraph()
         sanatized_graph_json = {}
@@ -284,7 +284,7 @@ class json_graph(object):
             if 'id' in json_graph_object:
                 fields['id'] = json_graph_object['id']
             fields['name'] = json_graph_object['name']
-        
+
         for _, graph_attribute in enumerate(json_graph_object):
             if graph_attribute == 'nodes':
                 sanatized_graph_json[graph_attribute] = []
@@ -296,8 +296,8 @@ class json_graph(object):
                         'actionSystemId': node['actionSystemId'],
                         'actionSystem': node['actionSystem']
                     }
-                    graph.add_node(node['id'], id=node['id'], 
-                        label=node['label'], 
+                    graph.add_node(node['id'], id=node['id'],
+                        label=node['label'],
                         influence=node['influence'],
                         actionSystemId=node['actionSystemId'],
                         actionSystem=node['actionSystem'])
@@ -332,7 +332,7 @@ class json_graph(object):
         influence_epochs = {}
         influence_all = []
 
-        for epoch in range(epochs):        
+        for epoch in range(epochs):
             for node, influence in local_g.nodes(data='influence'):
                 if epoch == 0:
                     influence_epochs[node] = []
@@ -348,7 +348,7 @@ class json_graph(object):
                     computed_influence = 0
                 else:
                     computed_influence = influence[to_node] + (influence[from_node] * (alpha * weight_absolute[(from_node, to_node, 0)]))
-            
+
                     if int(copysign(1, influence[to_node])) == 1:
                         computed_influence = computed_influence if computed_influence > 0 else 0
                     elif computed_influence > 0:
@@ -357,11 +357,11 @@ class json_graph(object):
                 influence[to_node] = computed_influence
 
             nx.set_node_attributes(local_g, influence, 'influence')
-        
+
         influence_mean = np.mean(influence_all)
         influence_std = np.std(influence_all)
 
-        for node_id, influence_list in influence_epochs.items():
-            influence_epochs[node_id] = [(value - influence_mean) / influence_std for value in influence_list]
+        #for node_id, influence_list in influence_epochs.items():
+        #    influence_epochs[node_id] = [(value - influence_mean) / influence_std for value in influence_list]
 
         return epochs, {'influence_epochs': influence_epochs}

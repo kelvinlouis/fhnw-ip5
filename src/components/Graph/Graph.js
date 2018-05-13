@@ -7,7 +7,7 @@ import { max, min, reduce, reduceRight } from 'underscore';
 
 const DARK_RED = '#8b0000';
 const LIGHTER_RED = '#e76300';
-const YELLOW = '#ffff00';
+const WHITE = '#ffffff';
 const GREEN = '#94d658';
 const DARK_GREEN = '#008000';
 
@@ -184,11 +184,10 @@ function setInfluenceColorScale(nodes) {
   const allInfluences = reduceRight(nodes, (a, b) => a.concat(b.influence_epochs), []);
   const minValue = min(allInfluences);
   const maxValue = max(allInfluences);
-  const mean = reduce(allInfluences, (a, b) => a + b, 0) / allInfluences.length;
 
   return d3.scaleLinear()
-    .domain([minValue, -1, mean, 1, maxValue])
-    .range([DARK_RED, LIGHTER_RED, YELLOW, GREEN, DARK_GREEN])
+    .domain([minValue, -1, 0, 1, maxValue])
+    .range([DARK_RED, LIGHTER_RED, WHITE, GREEN, DARK_GREEN])
 }
 
 class Graph extends Component {
@@ -329,7 +328,7 @@ class Graph extends Component {
       .data(links)
       .enter()
       .append('path')
-        .attr('class', d => 'link')
+        .attr('class', 'link')
         .attr('marker-end', d => `url(#marker_${colorRangeMap[d.color]})`)
         .style('stroke', d => d.color)
         .style('stroke-width', d => `${d.width}px`);
@@ -388,8 +387,7 @@ class Graph extends Component {
         .style('stroke', d => d.color)
         .style('stroke-width', d => `${d.width}px`);
 
-      // Make sure links are removed if the list
-      // links has changed
+      // Make sure links are removed if the list links has changed
       link
         .data(links)
         .exit()
