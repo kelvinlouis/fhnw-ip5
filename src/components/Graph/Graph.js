@@ -5,10 +5,13 @@ import './Graph.css';
 import { GraphPropTypes } from '../propTypes';
 import { max, min, reduce, reduceRight } from 'underscore';
 
+const DARK_RED = '#8b0000';
+const LIGHTER_RED = '#e76300';
+const YELLOW = '#ffff00';
+const GREEN = '#94d658';
+const DARK_GREEN = '#008000';
+
 const defaultColorScale = d3.scaleOrdinal(d3.schemeCategory20b);
-const nodeColorInfluence = d3.scaleLinear()
-  .domain([-1, 0, 1])
-  .range(['#e76300', 'grey', '#94d658']);
 
 const nodeColorCycle = d3.scaleLinear()
   .domain([0, 1])
@@ -16,7 +19,7 @@ const nodeColorCycle = d3.scaleLinear()
 
 const linkColors = d3.scaleLinear()
   .domain([-1, 0, 1])
-  .range(['#e76300', 'grey', '#94d658']);
+  .range([LIGHTER_RED, 'grey', GREEN]);
 
 const colorRangeMap = {};
 colorRangeMap[linkColors(-1)] = 'red';
@@ -185,8 +188,7 @@ function setInfluenceColorScale(nodes) {
 
   return d3.scaleLinear()
     .domain([minValue, -1, mean, 1, maxValue])
-    .range(['#8b0000','#e76300','#ffff00','#94d658','#008000'])
-    // .range(['darkred', 'red', 'yellow', 'green', '#42ff00']);
+    .range([DARK_RED, LIGHTER_RED, YELLOW, GREEN, DARK_GREEN])
 }
 
 class Graph extends Component {
