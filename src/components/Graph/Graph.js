@@ -338,11 +338,19 @@ class Graph extends Component {
     const node = svg.append('g')
       .attr('class', 'nodes')
       .selectAll('circle')
-      .data(nodes)
+      .data(nodes, (d) => {
+        if (d.x && d.y) {
+          d.fixed = true;
+          d.fx = d.x;
+          d.fy = d.y;
+        }
+        return d;
+      })
       .enter()
       .append('circle')
         .attr('class', 'node')
         .attr('r', d => d.size)
+        .classed('fixed', d => d.fixed)
         .style('fill', d => d.color)
         .on('mouseover', d => this.onNodeHover(d))
         .on('mouseout', d => this.onNodeHoverOut(d))
