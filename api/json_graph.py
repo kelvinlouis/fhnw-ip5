@@ -210,6 +210,10 @@ class json_graph(object):
                 'actionSystem':node_attributes['actionSystem'],
             }
 
+            if 'x' in node_attributes:
+                attributes['x'] = node_attributes['x']
+                attributes['y'] = node_attributes['y']
+
             if metrics:
                 attributes['cycles'] = cycles[node_attributes['id']]
                 for _, metric in enumerate(node_metrics):
@@ -295,11 +299,18 @@ class json_graph(object):
                         'actionSystemId': node['actionSystemId'],
                         'actionSystem': node['actionSystem']
                     }
+
                     graph.add_node(node['id'], id=node['id'],
                         label=node['label'],
                         influence=node['influence'],
                         actionSystemId=node['actionSystemId'],
                         actionSystem=node['actionSystem'])
+
+                    if 'x' in node:
+                        node_attributes['x'] = node['x']
+                        node_attributes['y'] = node['y']
+                        graph.add_node(node['id'], x=node['x'], y=node['y'])
+                    
                     sanatized_graph_json[graph_attribute].append(node_attributes)
             elif graph_attribute == 'links':
                 sanatized_graph_json[graph_attribute] = []
