@@ -13,7 +13,8 @@ import {
   setNodeSizeFilter,
   setNodeColorFilter,
   setLinkColorFilter,
-  setLinkWidthFilter, setNodeEpochs,
+  setLinkWidthFilter,
+  setNodeEpochs,
 } from './actions';
 import GraphLoader from './components/GraphLoader/GraphLoader';
 import GraphContainer from './containers/GraphContainer';
@@ -93,20 +94,16 @@ class App extends Component {
     }
   }
 
-  /**
-   * Only displays the graph and the filter,
-   * if the necessary props exist for them.
-   *
-   * @returns {*}
-   */
   render() {
     const { selectedGraphId } = this.props;
+    const params = (new URL(document.location)).searchParams;
+    const expertMode = params.get('mode') === 'expert';
 
     return (
       <div className="App">
         <CssBaseline />
         <GraphContainer />
-        <GraphPanelContainer />
+        {!expertMode ? <SimpleGraphPanelContainer /> : <GraphPanelContainer/>}
         {!selectedGraphId && <GraphLoader onSelected={this.onSelected} />}
         <NodeEditorContainer />
       </div>

@@ -158,7 +158,7 @@ class SimpleGraphPanel extends Component {
       selectedGraph,
     } = this.props;
 
-    let activeEpoch = nodeEpoch;
+    let activeEpoch = nodeEpoch >= nodeEpochs ? -1 : nodeEpoch;
 
     if (nodeColor !== 'influence') {
       onNodeColorChange('influence', selectedGraph.id);
@@ -167,7 +167,7 @@ class SimpleGraphPanel extends Component {
     const interval = setInterval(() => {
         onNodeEpochChange(++activeEpoch, selectedGraph.id);
 
-        if (activeEpoch === nodeEpochs) {
+        if (activeEpoch >= nodeEpochs) {
           clearInterval(interval);
         }
     }, 1000);
@@ -214,7 +214,7 @@ class SimpleGraphPanel extends Component {
 
     return (
       <div className="SimpleGraphPanel">
-        <ExpansionPanel>
+        <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Knoten</Typography>
           </ExpansionPanelSummary>
@@ -276,7 +276,7 @@ class SimpleGraphPanel extends Component {
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>
-        {selectedGraph && <ExpansionPanel>
+        {selectedGraph && <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Graph</Typography>
           </ExpansionPanelSummary>

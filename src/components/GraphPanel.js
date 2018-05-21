@@ -155,12 +155,12 @@ class GraphPanel extends Component {
       selectedGraph,
     } = this.props;
 
-    let activeEpoch = nodeEpoch;
+    let activeEpoch = nodeEpoch >= nodeEpochs ? -1 : nodeEpoch;
 
     const interval = setInterval(() => {
         onNodeEpochChange(++activeEpoch, selectedGraph.id);
 
-        if (activeEpoch === nodeEpochs) {
+        if (activeEpoch >= nodeEpochs) {
           clearInterval(interval);
         }
     }, 1000);
@@ -201,7 +201,7 @@ class GraphPanel extends Component {
 
     return (
       <div className="GraphPanel">
-        <ExpansionPanel>
+        <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Knoten</Typography>
           </ExpansionPanelSummary>
@@ -275,7 +275,7 @@ class GraphPanel extends Component {
             />
           </ExpansionPanelDetails>
         </ExpansionPanel>
-        {selectedGraph && <ExpansionPanel>
+        {selectedGraph && <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Graph</Typography>
           </ExpansionPanelSummary>
