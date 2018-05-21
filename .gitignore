@@ -2,7 +2,9 @@ data/
 .ipynb_checkpoints/
 build/
 .idea
+.vscode
 public/graph_data/
+api/graphdb.sqlite3*
 
 # dependencies
 /node_modules

@@ -3,7 +3,6 @@
 import codecs
 import json
 from math import copysign
-import numpy as np
 import networkx as nx
 from collections import defaultdict
 
@@ -211,6 +210,10 @@ class json_graph(object):
                 'actionSystem':node_attributes['actionSystem'],
             }
 
+            if 'x' in node_attributes:
+                attributes['x'] = node_attributes['x']
+                attributes['y'] = node_attributes['y']
+
             if metrics:
                 attributes['cycles'] = cycles[node_attributes['id']]
                 for _, metric in enumerate(node_metrics):
@@ -296,11 +299,18 @@ class json_graph(object):
                         'actionSystemId': node['actionSystemId'],
                         'actionSystem': node['actionSystem']
                     }
+
                     graph.add_node(node['id'], id=node['id'],
                         label=node['label'],
                         influence=node['influence'],
                         actionSystemId=node['actionSystemId'],
                         actionSystem=node['actionSystem'])
+
+                    if 'x' in node:
+                        node_attributes['x'] = node['x']
+                        node_attributes['y'] = node['y']
+                        graph.add_node(node['id'], x=node['x'], y=node['y'])
+                    
                     sanatized_graph_json[graph_attribute].append(node_attributes)
             elif graph_attribute == 'links':
                 sanatized_graph_json[graph_attribute] = []
@@ -330,14 +340,12 @@ class json_graph(object):
     def amplify_network(self, epochs=5, alpha=1.):
         local_g = self.graph.copy()
         influence_epochs = {}
-        influence_all = []
 
         for epoch in range(epochs):
             for node, influence in local_g.nodes(data='influence'):
                 if epoch == 0:
                     influence_epochs[node] = []
                 influence_epochs[node].append(influence)
-                influence_all.append(influence)
 
             egde_traversal = list(nx.edge_dfs(local_g))
             influence = nx.get_node_attributes(local_g, 'influence')
@@ -357,11 +365,5 @@ class json_graph(object):
                 influence[to_node] = computed_influence
 
             nx.set_node_attributes(local_g, influence, 'influence')
-
-        influence_mean = np.mean(influence_all)
-        influence_std = np.std(influence_all)
-
-        #for node_id, influence_list in influence_epochs.items():
-        #    influence_epochs[node_id] = [(value - influence_mean) / influence_std for value in influence_list]
 
         return epochs, {'influence_epochs': influence_epochs}
