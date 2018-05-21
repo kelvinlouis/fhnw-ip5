@@ -174,13 +174,13 @@ class sqlite_store(object):
             "sign",
             ]
 
-        if not filter['nodeSize'] in node_size_metrics_list:
+        if not 'nodeSize' in filter or not filter['nodeSize'] in node_size_metrics_list:
             filter['nodeSize'] = 'out_degree_weight_absolute'
-        if not filter['nodeColor'] in node_color_metrics_list:
+        if not 'nodeColor' in filter or not filter['nodeColor'] in node_color_metrics_list:
             filter['nodeColor'] = 'influence'
-        if not filter['linkWidth'] in edge_width_metrics_list:
+        if not 'linkWidth' in filter or not filter['linkWidth'] in edge_width_metrics_list:
             filter['linkWidth'] = 'weight_absolute'
-        if not filter['linkColor'] in edge_color_metrics_list:
+        if not 'linkColor' in filter or not filter['linkColor'] in edge_color_metrics_list:
             filter['linkColor'] = 'sign'
 
         filter['nodeEpochs'] = graph['influence_epochs']
@@ -195,10 +195,14 @@ class sqlite_store(object):
     def save_filters(self, graph_id, filter):
         set_filters = {}
 
-        set_filters['nodeSize'] = filter['filters']['nodeSize']
-        set_filters['nodeColor'] = filter['filters']['nodeColor']
-        set_filters['linkWidth'] = filter['filters']['linkWidth']
-        set_filters['linkColor'] = filter['filters']['linkColor']
+        if 'nodeSize' in filter['filters']:
+            set_filters['nodeSize'] = filter['filters']['nodeSize']
+        if 'nodeColor' in filter['filters']:
+            set_filters['nodeColor'] = filter['filters']['nodeColor']
+        if 'linkWidth' in filter['filters']:
+            set_filters['linkWidth'] = filter['filters']['linkWidth']
+        if 'linkColor' in filter['filters']:
+            set_filters['linkColor'] = filter['filters']['linkColor']
         
         filter_json = json.dumps(set_filters, ensure_ascii=False)
 
