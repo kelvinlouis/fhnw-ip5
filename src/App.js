@@ -17,6 +17,7 @@ import {
 } from './actions';
 import GraphLoader from './components/GraphLoader/GraphLoader';
 import GraphContainer from './containers/GraphContainer';
+import SimpleGraphPanelContainer from './containers/SimpleGraphPanelContainer';
 import GraphPanelContainer from './containers/GraphPanelContainer';
 import NodeEditorContainer from './containers/NodeEditorContainer';
 import { getGraph, getGraphFilters } from './ApiService';

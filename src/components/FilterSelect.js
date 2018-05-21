@@ -17,7 +17,7 @@ class FilterSelect extends Component {
   static propTypes = {
     id: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
-    list: PropTypes.arrayOf(PropTypes.string).isRequired,
+    list: PropTypes.array.isRequired,
     value: PropTypes.string,
     onChange: PropTypes.func,
   };
@@ -36,6 +36,18 @@ class FilterSelect extends Component {
   render() {
     const { classes, id, label, list, value } = this.props;
 
+    // Ensure options consist of value and label
+    const options = list.map(v => {
+      if (v.label && v.value) {
+        return v;
+      } else {
+        return {
+          label: v,
+          value: v,
+        };
+      }
+    });
+
     return (
       <FormControl className={classes.formControl}>
         <InputLabel htmlFor={id}>{label}</InputLabel>
@@ -48,7 +60,14 @@ class FilterSelect extends Component {
           }}
         >
           <MenuItem value="">-</MenuItem>
-          {list.map(value => <MenuItem key={value} value={value}>{value}</MenuItem>)}
+          {options.map(option => (
+            <MenuItem
+              key={option.value}
+              value={option.value}
+            >
+              {option.label}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
     );
