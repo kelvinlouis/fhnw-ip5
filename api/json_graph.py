@@ -80,7 +80,8 @@ class json_graph(object):
                     strengthen = int(weight_absolute if sign == 1 else 0)
                     weaken = int(weight_absolute if sign == -1 else 0)
 
-                    graph.add_edge(source, target, source=source,
+                    if source != target:
+                        graph.add_edge(source, target, source=source,
                             target=target,
                             weight=weight,
                             weight_absolute=weight_absolute,
@@ -191,8 +192,8 @@ class json_graph(object):
 
             # Find cycles and build a 'cycle id' list
             # Nodes with the same 'cycle id' belong to the same cycle
-            cycles_list = []
-            cycle_id = 0
+            cycles_list = [0]
+            cycle_id = 1
             for _, cycle in enumerate(list(nx.simple_cycles(graph))):
                 if len(cycle) <= 3:
                     cycles_list.append(cycle_id)
