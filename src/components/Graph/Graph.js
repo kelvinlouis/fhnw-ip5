@@ -304,9 +304,11 @@ class Graph extends Component {
     const width = +svg.attr('width');
     const height = +svg.attr('height');
 
+    const repelForce = d3.forceManyBody().strength(-300).distanceMin(100).distanceMax(400);
+
     const simulation = d3.forceSimulation()
-      .force('link', d3.forceLink().id(d => d.id).distance(200)/*.distance(d => radius(d.source.r / 2) + radius(d.target.r / 2))*/)
-      .force('charge', d3.forceManyBody())
+      .force('link', d3.forceLink().id(d => d.id).distance(120))
+      .force('charge', repelForce)
       .force('center', d3.forceCenter(width / 2, height / 2));
 
     svg.append('defs').selectAll('marker')
