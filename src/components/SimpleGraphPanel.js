@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { debounce } from 'underscore';
 import { withStyles } from 'material-ui/styles';
 import ExpansionPanel, {
   ExpansionPanelDetails,
@@ -199,9 +198,10 @@ class SimpleGraphPanel extends Component {
 
     const { name } = this.state;
     let cycles = 0;
-    let activeCycle = null;
+    let activeCycle = 0;
 
     if (nodeColorList.length > 0) {
+      // Create a list only consisting of cycles
       cycles = nodeColorList
         .filter(f => f.indexOf('cycle_') > -1)
         .map(f => +f.split('_')[1])

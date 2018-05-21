@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import * as d3 from 'd3';
 import './Graph.css';
 import { GraphPropTypes } from '../propTypes';
-import { max, min, reduce, reduceRight } from 'underscore';
+import { max, min, reduceRight } from 'underscore';
 
 const DARK_RED = '#8b0000';
 const LIGHTER_RED = '#e76300';
