@@ -19,6 +19,7 @@ export const UPDATE_GRAPH = 'UPDATE_GRAPH';
 
 export const SELECT_NODE = 'SELECT_NODE';
 export const CLOSE_NODE_EDITOR = 'CLOSE_NODE_EDITOR';
+export const SET_NODE_POSITION = 'SET_NODE_POSITION';
 
 const setFilter = (type, filter, graphId) => ({ type, filter, graphId });
 const setFilterList = (type, list) => ({ type, list, });
@@ -41,5 +42,7 @@ export const addGraph = (id, data) => ({ type: ADD_GRAPH, id, data });
 export const selectGraph = id => ({ type: SELECT_GRAPH, id });
 export const clearSelectedGraph = () => ({ type: CLEAR_SELECTED_GRAPH });
 export const updateGraph = (graphId, graph) => ({ type: UPDATE_GRAPH, graphId, graph, });
-export const selectNode = (node, graph) => ({ type: SELECT_NODE, node, graph, });
 export const closeNodeEditor = () => ({ type: CLOSE_NODE_EDITOR });
+
+export const selectNode = (node, graph) => ({ type: SELECT_NODE, node, graph, });
+export const setNodePosition = (nodeId, position, graphId) => ({ type: SET_NODE_POSITION, nodeId, position, graphId });

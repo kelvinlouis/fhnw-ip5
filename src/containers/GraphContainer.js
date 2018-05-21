@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { getSelectedGraph } from '../reducers/graph';
 import Graph from '../components/Graph/Graph';
-import { selectNode } from '../actions';
+import {selectNode, setNodePosition} from '../actions';
 
 const mapStateToProps = state => ({
   data: getSelectedGraph(state),
@@ -17,6 +17,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   onNodeDoubleClick: (node, graph) => dispatch(selectNode(node, graph)),
+  onNodePositionChange: (nodeId, position, graphId) => dispatch(setNodePosition(nodeId, position, graphId)),
 });
 
 const GraphContainer = connect(

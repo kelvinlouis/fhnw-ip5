@@ -3,9 +3,16 @@ import {
   SELECT_GRAPH,
   CLEAR_SELECTED_GRAPH,
   UPDATE_GRAPH,
+  SET_NODE_POSITION,
 } from '../actions'
 import { LOCAL_STORAGE_SELECTED_GRAPH } from '../constants';
 
+/**
+ * Creates a new immutable version of the graph.
+ *
+ * @param origin
+ * @returns {{id, name, nodes, links}}
+ */
 function createGraph(origin) {
   // Copy nodes
   const nodes = origin.nodes.map(n => Object.assign({}, n));
@@ -17,6 +24,30 @@ function createGraph(origin) {
     nodes,
     links,
   };
+}
+
+/**
+ * Sets the node position on the graph.
+ *
+ * @param origin
+ * @param nodeId
+ * @param position
+ * @returns {{id, name, nodes, links}}
+ */
+function setNodePosition(origin, nodeId, position) {
+  const node = origin.nodes.find(n => n.id === nodeId);
+
+  if (node) {
+    if (position === null) {
+      delete node.x;
+      delete node.y;
+    } else {
+      node.x = position.x;
+      node.y = position.y;
+    }
+  }
+
+  return origin;
 }
 
 export const graphs = (state = {}, action) => {
@@ -33,6 +64,11 @@ export const graphs = (state = {}, action) => {
     case UPDATE_GRAPH:
       newGraph = createGraph(action.graph);
       state[action.graphId] = newGraph;
+      return state;
+    case SET_NODE_POSITION:
+      // Sets the position of the node in the currently selected graph
+      graph = setNodePosition(state[action.graphId], action.nodeId, action.position);
+      state[action.graphId] = graph;
       return state;
     default:
       return state;

@@ -207,10 +207,12 @@ class Graph extends Component {
       linkColor: PropTypes.string,
     }),
     onNodeDoubleClick: PropTypes.func,
+    onNodePositionChange: PropTypes.func,
   };
 
   static defaultProps = {
     onNodeDoubleClick: () => {},
+    onNodePositionChange: () => {},
   };
 
   constructor(props) {
@@ -289,7 +291,8 @@ class Graph extends Component {
   }
 
   componentDidUpdate() {
-    const { nodes, links } = this.state;
+    const { id, nodes, links } = this.state;
+    const { onNodePositionChange } = this.props;
 
     if (!nodes || !links) return;
 
@@ -350,6 +353,7 @@ class Graph extends Component {
           d.fy = null;
           d.fixed = false;
           d3.select(this).classed('fixed', false);
+          onNodePositionChange(d.id, null, id);
         })
         .call(d3.drag()
           .on('start', dragstarted)
@@ -420,10 +424,9 @@ class Graph extends Component {
 
     function dragended(d) {
       if (!d3.event.active) simulation.alphaTarget(0);
-      // d.fx = null;
-      // d.fy = null;
       d.fixed = true;
       d3.select(this).classed('fixed', true);
+      onNodePositionChange(d.id, { x: d.x, y: d.y }, id);
     }
 
     function resize() {
