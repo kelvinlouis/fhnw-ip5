@@ -175,13 +175,13 @@ class sqlite_store(object):
             ]
 
         if not filter['nodeSize'] in node_size_metrics_list:
-            filter['nodeSize'] = ''
+            filter['nodeSize'] = 'out_degree_weight_absolute'
         if not filter['nodeColor'] in node_color_metrics_list:
-            filter['nodeColor'] = ''
+            filter['nodeColor'] = 'influence'
         if not filter['linkWidth'] in edge_width_metrics_list:
-            filter['linkWidth'] = ''
+            filter['linkWidth'] = 'weight_absolute'
         if not filter['linkColor'] in edge_color_metrics_list:
-            filter['linkColor'] = ''
+            filter['linkColor'] = 'sign'
 
         filter['nodeEpochs'] = graph['influence_epochs']
 
