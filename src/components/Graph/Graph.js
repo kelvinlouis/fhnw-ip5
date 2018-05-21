@@ -78,7 +78,6 @@ function positionLink(d) {
   return `M${x1},${y1}A${dr},${dr} 0 0,1 ${x2},${y2}`;
 }
 
-
 function transform(d) {
   return `translate(${d.x},${d.y})`;
 }
@@ -147,6 +146,12 @@ function applyNodeFilters(nodes, filters) {
     } else {
       n.color = nodeColorScale(n[colorAttr]);
     }
+
+    if (!filters.nodeShowFullLabel) {
+      n.visibleLabel = shortenLabel(n.label);
+    } else {
+      n.visibleLabel = n.label;
+    }
   });
 }
 
@@ -193,11 +198,11 @@ function setInfluenceColorScale(nodes) {
 class Graph extends Component {
   static propTypes = {
     data: GraphPropTypes,
-    nodeShowFullLabel: PropTypes.bool,
     filters: PropTypes.shape({
       nodeSize: PropTypes.string,
       nodeColor: PropTypes.string,
       nodeEpoch: PropTypes.number,
+      nodeShowFullLabel: PropTypes.bool,
       linkWidth: PropTypes.string,
       linkColor: PropTypes.string,
     }),
@@ -206,7 +211,6 @@ class Graph extends Component {
 
   static defaultProps = {
     onNodeDoubleClick: () => {},
-    nodeShowFullLabel: false,
   };
 
   constructor(props) {
@@ -262,7 +266,7 @@ class Graph extends Component {
    * @returns {boolean}
    */
   shouldComponentUpdate(nextProps, nextState) {
-    const { data, nodeShowFullLabel } = this.props;
+    const { data } = this.props;
 
     if (!data) {
       // No graph rendered yet
@@ -273,11 +277,6 @@ class Graph extends Component {
       if (data.id !== nextProps.data.id) {
         // Different graph was selected
         return true;
-      }
-
-      if (nodeShowFullLabel !== nextProps.nodeShowFullLabel) {
-        this.changeLabel();
-        return false;
       }
 
       if (nextProps.data.nodes || nextProps.data.links) {
@@ -349,6 +348,7 @@ class Graph extends Component {
           d3.event.preventDefault();
           d.fx = null;
           d.fy = null;
+          d.fixed = false;
           d3.select(this).classed('fixed', false);
         })
         .call(d3.drag()
@@ -363,11 +363,10 @@ class Graph extends Component {
       .enter()
       .append('text')
         .attr('id', d => `label_${d.id}`)
-        .attr('data-text', d => d.label)
         .attr('class', 'label')
         .attr('x', 10)
         .attr('y', '.35em')
-        .text(d => this.showLabel(d));
+        .text(d => d.visibleLabel);
 
     simulation
       .nodes(nodes)
@@ -401,11 +400,12 @@ class Graph extends Component {
         .style('fill', d => d.color);
 
       label
-        .attr('transform', transform);
+        .attr('transform', transform)
+        .text(d => d.visibleLabel);
     }
 
+    // Ensures graph can be updated from within the component
     this.tick = tick;
-    this.changeLabel = () => label.text(d => this.showLabel(d));
 
     function dragstarted(d) {
       if (!d3.event.active) simulation.alphaTarget(0.3).restart();
@@ -422,6 +422,7 @@ class Graph extends Component {
       if (!d3.event.active) simulation.alphaTarget(0);
       // d.fx = null;
       // d.fy = null;
+      d.fixed = true;
       d3.select(this).classed('fixed', true);
     }
 
@@ -434,32 +435,21 @@ class Graph extends Component {
     }
   }
 
-  showLabel(d) {
-    const { nodeShowFullLabel } = this.props;
-
-    if (!nodeShowFullLabel) {
-      return shortenLabel(d.label)
-    }
-    return d.label;
-  }
-
   onNodeHover(d) {
-    const { nodeShowFullLabel } = this.props;
+    const { filters: { nodeShowFullLabel } } = this.props;
 
     if (!nodeShowFullLabel) {
-      const id = `label_${d.id}`;
-      const el = document.getElementById(id);
-      el.innerHTML = el.dataset.text;
+      d.visibleLabel = d.label;
+      this.tick();
     }
   }
 
   onNodeHoverOut(d) {
-    const { nodeShowFullLabel } = this.props;
+    const { filters: { nodeShowFullLabel } } = this.props;
 
     if (!nodeShowFullLabel) {
-      const id = `label_${d.id}`;
-      const el = document.getElementById(id);
-      el.innerHTML = shortenLabel(d.label);
+      d.visibleLabel = shortenLabel(d.label);
+      this.tick();
     }
   }
 

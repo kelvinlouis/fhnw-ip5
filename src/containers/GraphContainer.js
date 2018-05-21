@@ -5,11 +5,11 @@ import { selectNode } from '../actions';
 
 const mapStateToProps = state => ({
   data: getSelectedGraph(state),
-  nodeShowFullLabel: state.nodeShowFullLabel,
   filters: {
     nodeSize: state.nodeSizeFilter,
     nodeColor: state.nodeColorFilter,
     nodeEpoch: state.nodeEpoch,
+    nodeShowFullLabel: state.nodeShowFullLabel,
     linkWidth: state.linkWidthFilter,
     linkColor: state.linkColorFilter,
   },
