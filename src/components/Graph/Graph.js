@@ -378,7 +378,7 @@ class Graph extends Component {
       .append('text')
         .attr('id', d => `label_${d.id}`)
         .attr('class', 'label')
-        .attr('x', 10)
+        .attr('x', d => d.size + 5)
         .attr('y', '.35em')
         .text(d => d.visibleLabel);
 
@@ -415,6 +415,7 @@ class Graph extends Component {
 
       label
         .attr('transform', transform)
+        .attr('x', d => d.size + 5)
         .text(d => d.visibleLabel);
     }
 
