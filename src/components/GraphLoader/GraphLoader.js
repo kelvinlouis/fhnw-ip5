@@ -86,7 +86,7 @@ class GraphLoader extends Component {
         <Card className={classes.card}>
           <CardContent className={classes.content}>
             <Typography variant="title" className={classes.title}>
-              Graph Laden
+              Lebensführungssystem laden
             </Typography>
             <GraphLoaderSelect
               id="graph-loader-select"

@@ -216,7 +216,7 @@ class SimpleGraphPanel extends Component {
       <div className="SimpleGraphPanel">
         <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Knoten</Typography>
+            <Typography>Lebensereignisse</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails className={classes.controlContainer}>
             <FilterSelect
@@ -228,7 +228,7 @@ class SimpleGraphPanel extends Component {
             />
 
             <FormControl className={classes.sliderFormControl}>
-              <FormLabel className={classes.sliderFormControlLabel}>Epochen</FormLabel>
+              <FormLabel className={classes.sliderFormControlLabel}>Einfluss über Zeit</FormLabel>
               <div className={classes.sliderContainer}>
                 <Slider
                   onChange={this.onSliderEpochChange}
@@ -278,7 +278,7 @@ class SimpleGraphPanel extends Component {
         </ExpansionPanel>
         {selectedGraph && <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Graph</Typography>
+            <Typography>Lebensführungssystem</Typography>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails className={classes.controlContainer}>
             <form className={classes.container} noValidate autoComplete="off">

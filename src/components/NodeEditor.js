@@ -177,7 +177,7 @@ class NodeEditor extends React.Component {
           aria-labelledby="form-dialog-title"
           fullWidth
         >
-          <DialogTitle id="form-dialog-title">Knoten editieren</DialogTitle>
+          <DialogTitle id="form-dialog-title">Lebensereigniss editieren</DialogTitle>
           <DialogContent>
             <TextField
               margin="dense"
