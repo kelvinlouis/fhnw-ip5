@@ -26,8 +26,11 @@ const styles = {
   },
   removed: {
     'text-decoration': 'line-through',
+    'width': ' 70%',
   },
-  notRemoved: {},
+  notRemoved: {
+    'width': ' 70%',
+  },
 };
 
 function changeLinks(graph, changedLinks) {
