@@ -54,6 +54,12 @@ const styles = {
   },
   activeDot: {
     'borderColor': indigo['300'],
+  },
+  legend: {
+    'backgroundImage': 'url("legend.svg")',
+    'width': '100%',
+    'height': '200px',
+    'margin-top': '16px',
   }
 };
 
@@ -246,7 +252,7 @@ class SimpleGraphPanel extends Component {
               </div>
             </FormControl>
 
-            {cycles && (
+            {cycles > 0 && (
               <FormControl className={classes.sliderFormControl}>
                 <FormLabel className={classes.sliderFormControlLabel}>Zyklen</FormLabel>
                 <div className={classes.sliderContainer}>
@@ -315,6 +321,8 @@ class SimpleGraphPanel extends Component {
             </form>
           </ExpansionPanelDetails>
         </ExpansionPanel>}
+
+        <div className={classes.legend} />
       </div>
     );
   }
